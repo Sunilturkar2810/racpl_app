@@ -1,0 +1,55 @@
+remote: error: GH013: Repository rule violations found for refs/heads/main.        
+remote: 
+remote: - GITHUB PUSH PROTECTION        
+remote:   —————————————————————————————————————————        
+remote:     Resolve the following violations before pushing again        
+remote: 
+remote:     - Push cannot contain secrets        
+remote: 
+remote:             
+remote:      (?) Learn how to resolve a blocked push        
+remote:      https://docs.github.com/code-security/secret-scanning/working-with-secret-scanning-and-push-protection/working-with-push-protection-from-the-command-line#resolving-a-blocked-push        
+remote:             
+remote:             
+remote:       —— Google Cloud Service Account Credentials ——————————        
+remote:        locations:        
+remote:          - commit: 47461da92e556370da44a5dd9de9c01cd68f72c9        
+remote:            path: f_b/backend/.env:9        
+remote:          - commit: 47461da92e556370da44a5dd9de9c01cd68f72c9        
+remote:            path: f_b/backend/src/config/service-account.json:1        
+remote:             
+remote:        (?) To push, remove secret from commit(s) or follow this URL to allow the secret.        
+remote:        https://github.com/Sunilturkar2810/racpl_app/security/secret-scanning/unblock-secret/3BMKnVuaGncgJzDe6Qi5iO5xzVV        
+remote:             
+remote:             
+remote:       —— Google OAuth Client ID ————————————————————————————        
+remote:        locations:        
+remote:          - commit: 47461da92e556370da44a5dd9de9c01cd68f72c9        
+remote:            path: f_b/backend/.env:28        
+remote:             
+remote:        (?) To push, remove secret from commit(s) or follow this URL to allow the secret.        
+remote:        https://github.com/Sunilturkar2810/racpl_app/security/secret-scanning/unblock-secret/3BMKnPCGUWEZ7s7HSgeuf1Tnfqr        
+remote:             
+remote:             
+remote:       —— Google OAuth Client Secret ————————————————————————        
+remote:        locations:        
+remote:          - commit: 47461da92e556370da44a5dd9de9c01cd68f72c9        
+remote:            path: f_b/backend/.env:29        
+remote:             
+remote:        (?) To push, remove secret from commit(s) or follow this URL to allow the secret.        
+remote:        https://github.com/Sunilturkar2810/racpl_app/security/secret-scanning/unblock-secret/3BMKnQftEf3RcnSvjBf3DdJnPNF        
+remote:             
+remote:             
+remote:       —— Google OAuth Refresh Token ————————————————————————        
+remote:        locations:        
+remote:          - commit: 47461da92e556370da44a5dd9de9c01cd68f72c9        
+remote:            path: f_b/backend/.env:30        
+remote:             
+remote:        (?) To push, remove secret from commit(s) or follow this URL to allow the secret.        
+remote:        https://github.com/Sunilturkar2810/racpl_app/security/secret-scanning/unblock-secret/3BMKnVXRP3hF9FTHZM8GONXghhl        
+remote:             
+remote: 
+remote: 
+To https://github.com/Sunilturkar2810/racpl_app.git
+ ! [remote rejected] main -> main (push declined due to repository rule violations)
+error: failed to push some refs to 'https://github.com/Sunilturkar2810/racpl_app.git'

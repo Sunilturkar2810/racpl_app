@@ -6,83 +6,8 @@ const SHEET_NAME = "projects";
 
 // ✅ Default Projects List
 const DEFAULT_PROJECTS = [
-  "229- ENGELBERG GROUP HOUSE, IMT MANESAR",
-  "290-KL EXPORT PVT. LTD. , FARIDABAD",
   "336- UKB ELECTRONICS- INTERIORS,GILOTH",
   "358- RP STEEL,  HARYANA",
-  "362- OIL & GAS, FARIDABAD",
-  "373- NATIONAL PRODUCTS, GHILOTH",
-  "375- POLYLACE INDIA , BAWAL",
-  "377- KAMINI JAIN RATHDHANA , SONIPAT",
-  "389- JSH PACKAGING, BAWAL",
-  "401- VIP PLASTICS, KUNDLI",
-  "346- SVARN INFRATEL EBEAM, 1.0 Mev, PALWAL",
-  "414- SVARN INFRATEL , GHILOTH",
-  "428- SVARN EXPANSION , PALWAL",
-  "429- ENVOYS, IMT MANESAR",
-  "431- VAISHNO INDIA, IMT FARIDABAD",
-  "438- SAMARPAN HOSPITAL, KUNDLI",
-  "440- SB ECOM,IMT FARIDABAD",
-  "441- AD CHEM, GILOTH",
-  "447- SHAKTI PULLY, ROHTAK",
-  "452- DE NOVO ,GURUGRAM",
-  "453- LARAON INDIA",
-  "454- AGROMACH , PALWAL",
-  "456- HRF FARMHOUSE, MANESAR",
-  "457- GOMEGA CREATIONS, GILOTH",
-  "459- K2 GROUP HOUSING, IMT MANESAR",
-  "461- WIPE HOTWIRE , NEEMRANA",
-  "465- INSULATION SOLUTION , KHARKHAUDA",
-  "466- TATA STEEL , NEW DELHI",
-  "468- APL FOOTWEAR, NATHUPUR",
-  "469- GURU AMARDASS, NOIDA",
-  "471- SKAS, NEW DELHI",
-  "472- MRK HEALTHCARE , GUJARAT",
-  "475- NEW INDIA SURFACTANTS PVT. LTD. , HYDERABAD",
-  "476- AFFLATUS , GURUGRAM",
-  "478- TRINATH, SRI CITY(ANDHRA PRADESH)",
-  "480- M/S.MADHU KHARBANDA, IMT MANESAR",
-  "482- PACE CITY , GURUGRAM",
-  "483- SAATVIK GREEN , AMBALA",
-  "484- ADVANCE ANMOL COMMERCIAL  , FARIDABAD",
-  "485- M/S.BUKAKA THREE D INTEGRATED SOLUTIONS LTD.,GHILOTH",
-  "487- UNIGLOBE EXPORTS PRIVATE LIMITED,JODHPUR",
-  "491- SUMIT INDUSTRIAL GEARS LLP , ROHTAK",
-  "492- SENIOR LIVING, RAJASTHAN",
-  "495- KRN HVAC PRODUCTS PVT. LTD. NEEMRANA",
-  "497-SUMIT ENGINEERS,FARIDABAD",
-  "498- HITAISHI HOSPITAL,PITAMPURA",
-  "500- KAMAL RUBPLAST INDUSTRIES,JHAJJAR",
-  "501- UNICORN MEDIDENT, MANESAR",
-  "503- GOLD CRAFT , DWARKA",
-  "504- M/S KAN PLAST PVT. LTD. , ALIGARH",
-  "505- AAN CLOTHING,GURGAON",
-  "507- AJAY JI EBD-65, GURGAON",
-  "508- TSKEI INDIA PVT. LTD.,NEEMRANA",
-  "509- SMILE ,VIZAG",
-  "510- BEC CONDUIT PVT. LTD. , YEIDA",
-  "511- RHINE POWER, ROHAD",
-  "512- CLEAR PACK, GREATER NOIDA",
-  "514- NAVJEEVAN HOSPITAL,PITAMPURA",
-  "515- SONA SIGNATURE, GURUGRAM",
-  "516- SAFEX EXPANSION , KESHWANA",
-  "517- BODYCARE CREATIONS,HAPUR",
-  "518- ATLANTIS, RUDRAPUR",
-  "519- MAGNOLIA , NARNAUL",
-  "520- LAPP INDIA EXPANSION,BHOPAL",
-  "521- ACEDS, BHOPAL",
-  "522- SSP BUILDING UFLEX , PANIPAT",
-  "523- MAHAVEER BUSINESS PARK,RAIPUR",
-  "524- M/S MARC SALON FURNITURE & BEAUITY EQUIPMENTS,MANESAR",
-  "525- PALLAVI COPPER DMIC, NOIDA",
-  "526- SAI AUTO , PRITHLA",
-  "527- MOHAN PACKAGING",
-  "528- NEW THREE D INTEGRATED SOLUTIONS LTD.,ALWAR",
-  "529- INULIFE BIOFIBRES LLP, BHIWADI",
-  "530- POLYLACE EXPANSION, BAWAL",
-  "532- VICTORA",
-  "535- MC OFFICE REWARI",
-  "461A- WIPE HOTWIRE NEW EXPANSION, NEEMRANA"
 ];
 
 const createProjectSheet = async () => {
@@ -109,13 +34,48 @@ const createProjectSheet = async () => {
       console.log("Projects sheet already exists");
     }
 
-    // 2️⃣ Ensure header row
+    // 2️⃣ Ensure header row (32 columns)
     await sheets.spreadsheets.values.update({
       spreadsheetId: SPREADSHEET_ID,
-      range: `${SHEET_NAME}!A1:L1`,
+      range: `${SHEET_NAME}!A1:AF1`,
       valueInputOption: "RAW",
       requestBody: {
-        values: [["id", "name", "location", "client_name", "status", "description", "start_date", "end_date", "budget", "project_manager", "contractor", "created_at"]],
+        values: [
+          [
+            "id",             // 0
+            "name",           // 1
+            "address",        // 2
+            "location",       // 3
+            "client_name",    // 4
+            "contact_no",     // 5
+            "status",         // 6
+            "date_of_app",    // 7
+            "team_lead",      // 8
+            "award_letter",   // 9
+            "award_letter_remark", // 10
+            "land_paper_zonning", // 11
+            "land_paper_zonning_remark", // 12
+            "soil_testing",   // 13
+            "soil_testing_remark", // 14
+            "survey",         // 15
+            "water_testing",  // 16
+            "water_testing_remark", // 17
+            "plot_demarcation_by_govt", // 18
+            "plot_demarcation_by_govt_remark", // 19
+            "far_purchase",   // 20
+            "building_plan_approval", // 21
+            "building_plan_remark", // 22
+            "revised_building_plan", // 23
+            "factory_act_consultant", // 24
+            "firefighting_approval", // 25
+            "dpc_certificate", // 26
+            "dpc_certificate_remark", // 27
+            "fire_noc",       // 28
+            "labour_cess",    // 29
+            "solar_haredan_oc", // 30
+            "created_at",     // 31
+          ],
+        ],
       },
     });
 
@@ -131,24 +91,24 @@ const createProjectSheet = async () => {
     if (existingRows.length === 0) {
       const now = new Date().toISOString();
 
-      const seedRows = DEFAULT_PROJECTS.map((name, index) => [
-        index + 1,
-        name,
-        "N/A", // location
-        "N/A", // client_name
-        "Active", // status
-        "Default seeded project", // description
-        "", // start_date
-        "", // end_date
-        "", // budget
-        "", // project_manager
-        "", // contractor
-        now,
-      ]);
+      const seedRows = DEFAULT_PROJECTS.map((name, index) => {
+        const row = new Array(32).fill("");
+        row[0] = index + 1;
+        row[1] = name;
+        row[2] = "N/A"; // address
+        row[3] = "N/A"; // location
+        row[4] = "N/A"; // client_name
+        row[5] = "N/A"; // contact_no
+        row[6] = "Active"; // status
+        row[7] = ""; // date_of_app
+        row[8] = ""; // team_lead
+        row[31] = now; // created_at
+        return row;
+      });
 
       await sheets.spreadsheets.values.append({
         spreadsheetId: SPREADSHEET_ID,
-        range: `${SHEET_NAME}!A:L`,
+        range: `${SHEET_NAME}!A:AF`,
         valueInputOption: "USER_ENTERED",
         requestBody: {
           values: seedRows,

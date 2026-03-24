@@ -673,11 +673,13 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                               if (item.receiptUrl != null &&
                                   item.receiptUrl!.isNotEmpty) {
                                 final uri = Uri.parse(item.receiptUrl!);
-                                if (await canLaunchUrl(uri)) {
+                                try {
                                   await launchUrl(
                                     uri,
                                     mode: LaunchMode.externalApplication,
                                   );
+                                } catch (e) {
+                                  debugPrint('Could not launch $uri: $e');
                                 }
                               }
                             },

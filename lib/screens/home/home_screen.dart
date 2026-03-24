@@ -49,46 +49,103 @@ class _HomeScreenState extends State<HomeScreen> {
   void _showMoreMenu() {
     showModalBottomSheet(
       context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
       builder: (context) {
         return Container(
-          padding: const EdgeInsets.all(20),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'More Options',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              // Custom AppBar for Bottom Sheet
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor,
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+                ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    const Text(
+                      'More Options',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    Positioned(
+                      right: 0,
+                      child: InkWell(
+                        onTap: () => Navigator.pop(context),
+                        borderRadius: BorderRadius.circular(20),
+                        child: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.close, size: 20, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 32),
+              // Grid Menu
               Flexible(
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4,
-                    mainAxisSpacing: 20,
-                    crossAxisSpacing: 10,
-                  ),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 20, right: 20, bottom: 32),
+                  child: GridView.builder(
+                    padding: EdgeInsets.zero,
+                    shrinkWrap: true,
+                    physics: const BouncingScrollPhysics(),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 4,
+                      mainAxisSpacing: 24,
+                      crossAxisSpacing: 8,
+                      childAspectRatio: 0.7,
+                    ),
                   itemCount: _labels.length - 3, // Remaining items after first 3
                   itemBuilder: (context, index) {
                     final actualIndex = index + 3;
                     return InkWell(
+                      borderRadius: BorderRadius.circular(16),
                       onTap: () {
                         Navigator.pop(context);
                         setState(() => _selectedIndex = actualIndex);
                       },
                       child: Column(
-                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Icon(_icons[actualIndex], color: Theme.of(context).primaryColor),
-                          const SizedBox(height: 4),
+                          Container(
+                            padding: const EdgeInsets.all(14),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).primaryColor.withOpacity(0.08),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              _icons[actualIndex], 
+                              color: Theme.of(context).primaryColor,
+                              size: 26,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
                           Text(
                             _labels[actualIndex],
                             textAlign: TextAlign.center,
-                            style: const TextStyle(fontSize: 11),
+                            style: const TextStyle(
+                              fontSize: 12, 
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -98,6 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
               ),
+            ),
             ],
           ),
         );

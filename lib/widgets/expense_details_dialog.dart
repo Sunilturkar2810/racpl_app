@@ -117,11 +117,13 @@ class ExpenseDetailsDialog extends StatelessWidget {
                     InkWell(
                       onTap: () async {
                         final uri = Uri.parse(expense.receiptUrl!);
-                        if (await canLaunchUrl(uri)) {
+                        try {
                           await launchUrl(
                             uri,
                             mode: LaunchMode.externalApplication,
                           );
+                        } catch (e) {
+                          debugPrint('Could not launch $uri: $e');
                         }
                       },
                       child: const Text(
