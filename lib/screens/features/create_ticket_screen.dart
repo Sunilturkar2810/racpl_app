@@ -2,11 +2,13 @@ import 'dart:ui';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'dart:developer' as developer;
 import 'package:image_picker/image_picker.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/ticket_provider.dart';
 import '../../services/dio_service.dart';
 
 class _DropdownItem {
@@ -34,6 +36,7 @@ class _CreateTicketDialogState extends State<CreateTicketDialog> {
   final _formKey = GlobalKey<FormState>();
 
   bool _isLoadingMasters = true;
+  bool _isSubmitting = false;
 
   String? _selectedLocation;
   String? _selectedPCEA;
@@ -129,6 +132,90 @@ class _CreateTicketDialogState extends State<CreateTicketDialog> {
         _desiredDate = picked;
       });
     }
+  }
+
+  Future<void> _submitTicket() async {
+    if (_isSubmitting) return;
+
+    final location = _selectedLocation;
+    final pcea = _selectedPCEA;
+    final priority = _selectedPriority;
+    final description = _descriptionController.text.trim();
+
+    if (location == null || location.isEmpty) {
+      _showSnackBar('Please select location');
+      return;
+    }
+    if (pcea == null || pcea.isEmpty) {
+      _showSnackBar('Please select PC/EA accountable');
+      return;
+    }
+    if (_desiredDate == null) {
+      _showSnackBar('Please select desired date');
+      return;
+    }
+    if (description.isEmpty) {
+      _showSnackBar('Please enter issue description');
+      return;
+    }
+
+    setState(() => _isSubmitting = true);
+
+    try {
+      final dioService = context.read<DioService>();
+      final formData = FormData.fromMap({
+        'location': location,
+        'pc_accountable': pcea,
+        'issue_description': description,
+        'desired_date': _desiredDate!.toIso8601String(),
+        'priority': (priority ?? 'Medium').toUpperCase(),
+        if (_selectedSolver != null && _selectedSolver!.isNotEmpty)
+          'problem_solver': _selectedSolver,
+      });
+
+      if (_selectedImage != null) {
+        formData.files.add(
+          MapEntry(
+            'image_upload',
+            await MultipartFile.fromFile(
+              _selectedImage!.path,
+              filename: _selectedImage!.path.split(Platform.pathSeparator).last,
+            ),
+          ),
+        );
+      }
+
+      await dioService.post<Map<String, dynamic>>(
+        '/help-tickets/raise',
+        data: formData,
+        fromJson: (json) => json as Map<String, dynamic>,
+      );
+
+      if (!mounted) return;
+      await context.read<TicketProvider>().fetchTickets();
+      if (!mounted) return;
+      Navigator.of(context).pop();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Ticket raised successfully'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      developer.log('Error raising ticket: $e');
+      if (!mounted) return;
+      _showSnackBar('Failed to raise ticket');
+    } finally {
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+      }
+    }
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   @override
@@ -288,22 +375,29 @@ class _CreateTicketDialogState extends State<CreateTicketDialog> {
                         width: double.infinity,
                         height: 50,
                         child: ElevatedButton.icon(
-                          onPressed: () {
-                            // TODO: Implement API submission
-                          },
+                          onPressed: _isSubmitting ? null : _submitTicket,
                           icon: const Icon(
                             Icons.send,
                             color: Colors.white,
                             size: 20,
                           ),
-                          label: const Text(
-                            'Raise Ticket',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
+                          label: _isSubmitting
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Text(
+                                  'Raise Ticket',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF0066FF),
                             shape: RoundedRectangleBorder(

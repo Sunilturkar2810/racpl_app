@@ -7,6 +7,7 @@ class HelpTicket {
   final String title;
   final String description;
   final String category;
+  final String location;
   final String priority;
   final String status;
   final DateTime createdAt;
@@ -21,6 +22,7 @@ class HelpTicket {
     required this.title,
     required this.description,
     required this.category,
+    required this.location,
     required this.priority,
     required this.status,
     required this.createdAt,
@@ -56,6 +58,7 @@ class HelpTicket {
       title: json['issue_description'] ?? json['title'] ?? '',
       description: json['issue_description'] ?? json['description'] ?? '',
       category: json['category'] ?? 'General',
+      location: json['location'] ?? '',
       priority: json['priority'] ?? 'medium',
       status: json['status'] ?? 'open',
       createdAt: json['created_at'] != null

@@ -284,6 +284,7 @@ class _TicketCard extends StatelessWidget {
   Future<void> _viewTicketDetails(BuildContext context) async {
     showDialog(
       context: context,
+      useRootNavigator: true,
       barrierDismissible: false,
       builder: (context) => const Center(child: CircularProgressIndicator()),
     );
@@ -296,7 +297,7 @@ class _TicketCard extends StatelessWidget {
       );
 
       if (!context.mounted) return;
-      Navigator.of(context).pop(); // dismiss loading
+      Navigator.of(context, rootNavigator: true).pop(); // dismiss loading
 
       // The backend usually returns the ticket object directly, or wrapped in a data field.
       // If it's a map, pass it. If it has a data field, use that.
@@ -311,11 +312,12 @@ class _TicketCard extends StatelessWidget {
 
       showDialog(
         context: context,
+        useRootNavigator: true,
         builder: (context) => TicketDetailDialog(ticketData: ticketData),
       );
     } catch (e) {
       if (!context.mounted) return;
-      Navigator.of(context).pop(); // dismiss loading
+      Navigator.of(context, rootNavigator: true).pop(); // dismiss loading
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to load ticket details: $e')),
       );
@@ -325,6 +327,7 @@ class _TicketCard extends StatelessWidget {
   Future<void> _viewTicketHistory(BuildContext context) async {
     showDialog(
       context: context,
+      useRootNavigator: true,
       barrierDismissible: false,
       builder: (context) => const Center(child: CircularProgressIndicator()),
     );
@@ -337,7 +340,7 @@ class _TicketCard extends StatelessWidget {
       );
 
       if (!context.mounted) return;
-      Navigator.of(context).pop(); // dismiss loading
+      Navigator.of(context, rootNavigator: true).pop(); // dismiss loading
 
       List<dynamic> historyData = [];
       if (response != null && response is Map && response.containsKey('data')) {
@@ -348,6 +351,7 @@ class _TicketCard extends StatelessWidget {
 
       showDialog(
         context: context,
+        useRootNavigator: true,
         builder: (context) => TicketHistoryDialog(
           ticketId: ticket.id,
           ticketDisplayId: _getTicketDisplayId(),
@@ -356,7 +360,7 @@ class _TicketCard extends StatelessWidget {
       );
     } catch (e) {
       if (!context.mounted) return;
-      Navigator.of(context).pop(); // dismiss loading
+      Navigator.of(context, rootNavigator: true).pop(); // dismiss loading
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to load ticket history: $e')),
       );
@@ -473,7 +477,7 @@ class _TicketCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      ticket.category.isEmpty ? 'General' : ticket.category,
+                      ticket.location.isEmpty ? 'N/A' : ticket.location,
                       style: TextStyle(
                         color: Colors.grey[600],
                         fontSize: 13,
@@ -556,17 +560,23 @@ class _TicketCard extends StatelessWidget {
 
             // Buttons
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildActionButton(
-                  'View Details',
-                  () => _viewTicketDetails(context),
-                  isDark,
+                Expanded(
+                  child: _buildActionButton(
+                    'View Details',
+                    Icons.remove_red_eye_outlined,
+                    () => _viewTicketDetails(context),
+                    isDark,
+                  ),
                 ),
-                _buildActionButton(
-                  'View History',
-                  () => _viewTicketHistory(context),
-                  isDark,
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildActionButton(
+                    'View History',
+                    Icons.history_outlined,
+                    () => _viewTicketHistory(context),
+                    isDark,
+                  ),
                 ),
               ],
             ),
@@ -576,23 +586,47 @@ class _TicketCard extends StatelessWidget {
     );
   }
 
-  Widget _buildActionButton(String label, VoidCallback onTap, bool isDark) {
+  Widget _buildActionButton(
+    String label,
+    IconData icon,
+    VoidCallback onTap,
+    bool isDark,
+  ) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(12),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
         decoration: BoxDecoration(
-          color: isDark ? Colors.grey[800] : const Color(0xFFF5F7FA),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: isDark ? Colors.white : Colors.black87,
-            fontWeight: FontWeight.bold,
-            fontSize: 13,
+          color: isDark ? Colors.grey[850] : const Color(0xFFF5F7FA),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isDark ? Colors.grey[700]! : const Color(0xFFE1E7F0),
           ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 16,
+              color: isDark ? Colors.blue[200] : const Color(0xFF2563EB),
+            ),
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: isDark ? Colors.white : Colors.black87,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
