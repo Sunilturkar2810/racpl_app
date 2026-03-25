@@ -35,19 +35,25 @@ class ProjectService {
   }
 
   Future<Project> createProject({
+    int? id,
     required String name,
-    required String description,
-    String? startDate,
-    String? endDate,
-    double? budget,
+    required String address,
+    required String location,
+    required String clientName,
+    required String contactNo,
+    required String status,
+    required String teamLead,
   }) async {
     try {
       final data = {
+        if (id != null) 'id': id,
         'name': name,
-        'description': description,
-        if (startDate != null) 'start_date': startDate,
-        if (endDate != null) 'end_date': endDate,
-        if (budget != null) 'budget': budget,
+        'address': address,
+        'location': location,
+        'client_name': clientName,
+        'contact_no': contactNo,
+        'status': status,
+        'team_lead': teamLead,
       };
       return await _dioService.post<Project>(
         '/projects',
@@ -59,9 +65,8 @@ class ProjectService {
     }
   }
 
-  Future<Project> updateProject(int id, {String? status}) async {
+  Future<Project> updateProject(int id, Map<String, dynamic> data) async {
     try {
-      final data = {if (status != null) 'status': status};
       return await _dioService.put<Project>(
         '/projects/$id',
         data: data,

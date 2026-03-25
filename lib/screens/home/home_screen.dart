@@ -26,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
     'Delegation',
     'Checklist',
     'MOMS',
-    'Projects',
+    'Project Management',
     'Vendor',
     'Expense',
     'Help Ticket',

@@ -52,21 +52,27 @@ class ProjectProvider extends ChangeNotifier {
   }
 
   Future<void> createProject({
+    int? id,
     required String name,
-    required String description,
-    String? startDate,
-    String? endDate,
-    double? budget,
+    required String address,
+    required String location,
+    required String clientName,
+    required String contactNo,
+    required String status,
+    required String teamLead,
   }) async {
     _setLoading(true);
     _clearError();
     try {
       final newProject = await _projectService.createProject(
+        id: id,
         name: name,
-        description: description,
-        startDate: startDate,
-        endDate: endDate,
-        budget: budget,
+        address: address,
+        location: location,
+        clientName: clientName,
+        contactNo: contactNo,
+        status: status,
+        teamLead: teamLead,
       );
       _projects.add(newProject);
       notifyListeners();
@@ -77,11 +83,11 @@ class ProjectProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> updateProject(int id, {String? status}) async {
+  Future<void> updateProject(int id, Map<String, dynamic> data) async {
     _setLoading(true);
     _clearError();
     try {
-      final updated = await _projectService.updateProject(id, status: status);
+      final updated = await _projectService.updateProject(id, data);
       final index = _projects.indexWhere((p) => p.id == id);
       if (index != -1) {
         _projects[index] = updated;

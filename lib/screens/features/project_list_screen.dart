@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/project_provider.dart';
 import '../../models/project_model.dart';
+import '../../widgets/create_project_dialog.dart';
+import '../../widgets/edit_project_dialog.dart';
 
 class ProjectListScreen extends StatefulWidget {
   const ProjectListScreen({super.key});
@@ -17,13 +19,22 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
     Future.microtask(() => context.read<ProjectProvider>().fetchProjects());
   }
 
+  String _selectedProjectFilter = 'All Projects';
+  String _selectedStatusFilter = 'Global Status';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF7F8FA),
       appBar: AppBar(
-        title: const Text('Projects'),
+        title: const Text(
+          'Project Management',
+          style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.black87),
       ),
       body: Consumer<ProjectProvider>(
         builder: (context, provider, _) {
@@ -47,99 +58,376 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
             );
           }
 
-          if (provider.projects.isEmpty) {
-            return const Center(child: Text('No projects yet'));
-          }
+          List<Project> filteredProjects = provider.projects.where((p) {
+            bool matchProject = _selectedProjectFilter == 'All Projects' || p.name == _selectedProjectFilter;
+            bool matchStatus = _selectedStatusFilter == 'Global Status' || p.status.toUpperCase() == _selectedStatusFilter.toUpperCase();
+            return matchProject && matchStatus;
+          }).toList();
 
-          return ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: provider.projects.length,
-            itemBuilder: (context, index) {
-              final project = provider.projects[index];
-              return _ProjectCard(project: project);
-            },
+          return Column(
+            children: [
+              _buildTopBar(provider),
+              Expanded(
+                child: filteredProjects.isEmpty
+                    ? const Center(child: Text('No projects match the filters'))
+                    : ListView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        itemCount: filteredProjects.length,
+                        itemBuilder: (context, index) {
+                          return _buildProjectCard(filteredProjects[index]);
+                        },
+                      ),
+              ),
+            ],
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Navigate to create project screen
-        },
-        child: const Icon(Icons.add),
+    );
+  }
+
+  Widget _buildTopBar(ProjectProvider provider) {
+    List<String> projectNames = ['All Projects'];
+    projectNames.addAll(provider.projects.map((p) => p.name).toSet().toList());
+
+    List<String> statusLevels = [
+      'Global Status',
+      'Award to Start',
+      'Running',
+      'Provision',
+      'Hold',
+      'Completed',
+      'Cancelled'
+    ];
+
+    return Container(
+      margin: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            _buildCustomDropdown(
+              label: 'PROJECT NAME',
+              value: _selectedProjectFilter,
+              icon: Icons.filter_alt_outlined,
+              items: projectNames,
+              onChanged: (val) {
+                setState(() => _selectedProjectFilter = val);
+              },
+            ),
+            const SizedBox(width: 16),
+            _buildCustomDropdown(
+              label: 'CURRENT STATUS',
+              value: _selectedStatusFilter,
+              icon: Icons.circle,
+              iconColor: Colors.blue,
+              items: statusLevels,
+              onChanged: (val) {
+                setState(() => _selectedStatusFilter = val);
+              },
+            ),
+            const SizedBox(width: 24),
+            ElevatedButton.icon(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (_) => const CreateProjectDialog(),
+                );
+              },
+              icon: const Icon(Icons.add, size: 18),
+              label: const Text('New Project'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue.shade600,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
-}
 
-class _ProjectCard extends StatelessWidget {
-  final Project project;
-
-  const _ProjectCard({required this.project});
-
-  Color _getStatusColor(String status) {
-    switch (status) {
-      case 'planning':
-        return Colors.blue;
-      case 'in-progress':
-        return Colors.orange;
-      case 'completed':
-        return Colors.green;
-      case 'on-hold':
-        return Colors.grey;
-      default:
-        return Colors.grey;
-    }
+  Widget _buildCustomDropdown({
+    required String label,
+    required String value,
+    required IconData icon,
+    Color? iconColor,
+    required List<String> items,
+    required ValueChanged<String> onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 10,
+            color: Colors.grey.shade600,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 4),
+        PopupMenuButton<String>(
+          position: PopupMenuPosition.under,
+          offset: const Offset(0, 4),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(4),
+            side: BorderSide(color: Colors.grey.shade300),
+          ),
+          color: Colors.white,
+          elevation: 2,
+          padding: EdgeInsets.zero,
+          onSelected: onChanged,
+          itemBuilder: (context) {
+            return items.map((item) {
+              final isSelected = item == value;
+              return PopupMenuItem<String>(
+                value: item,
+                padding: EdgeInsets.zero,
+                height: 40,
+                child: Container(
+                  width: double.infinity,
+                  color: isSelected ? Colors.blue.shade600 : Colors.transparent,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  child: Text(
+                    item,
+                    style: TextStyle(
+                      color: isSelected ? Colors.white : Colors.black87,
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+              );
+            }).toList();
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.blue.shade400),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, size: 14, color: iconColor ?? Colors.blue),
+                const SizedBox(width: 8),
+                Text(
+                  value,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.black87),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: ListTile(
-        leading: const Icon(Icons.folder, color: Colors.blue),
-        title: Text(project.name),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 8),
-            Text(
-              project.description,
+  Widget _buildInfoRow(String title, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 70,
+            child: Text(
+              '$title:',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey.shade600,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: Colors.black87,
+              ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
-            const SizedBox(height: 8),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProjectCard(Project project) {
+    return Card(
+      elevation: 0,
+      margin: const EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: Colors.grey.shade200),
+      ),
+      color: Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header: ID + Name & Status
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Team: ${project.teamMembers.length}',
-                  style: Theme.of(context).textTheme.bodySmall,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            '#${project.id}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue.shade600,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              project.name,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (project.address.isNotEmpty && project.address != 'N/A')
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2),
+                          child: Text(
+                            project.address,
+                            style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
+                _buildStatusBadge(project.status),
+              ],
+            ),
+            const SizedBox(height: 10),
+            
+            // Details Matrix
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  flex: 5,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildInfoRow('Client', project.clientName.replaceAll('\n', ', ')),
+                      _buildInfoRow('Contact', project.contactNo.replaceAll('\n', ', ')),
+                    ],
                   ),
-                  decoration: BoxDecoration(
-                    color: _getStatusColor(project.status).withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    project.status,
-                    style: TextStyle(
-                      color: _getStatusColor(project.status),
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
+                ),
+                Expanded(
+                  flex: 4,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildInfoRow('Location', project.location),
+                      _buildInfoRow('Lead', project.teamLead),
+                    ],
                   ),
                 ),
               ],
             ),
+            
+            // Actions
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                _buildActionIcon(Icons.info_outline, Colors.blue.shade400, () {}),
+                const SizedBox(width: 8),
+                _buildActionIcon(Icons.edit_outlined, Colors.orange.shade400, () {
+                  showDialog(
+                    context: context,
+                    builder: (_) => EditProjectDialog(project: project),
+                  );
+                }),
+              ],
+            ),
           ],
         ),
-        onTap: () {
-          // Navigate to project detail
-        },
+      ),
+    );
+  }
+
+  Widget _buildStatusBadge(String status) {
+    if (status.isEmpty || status == 'N/A' || status == 'Active') {
+       return Container(
+         width: 30,
+         height: 14,
+         decoration: BoxDecoration(
+           color: Colors.grey.shade200,
+           borderRadius: BorderRadius.circular(10),
+         ),
+       );
+    }
+    
+    Color bgColor = Colors.purple.shade50;
+    Color textColor = Colors.purple.shade400;
+
+    if (status.toUpperCase() == 'RUNNING') {
+      bgColor = Colors.green.shade50;
+      textColor = Colors.green.shade600;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        status.toUpperCase(),
+        style: TextStyle(
+          color: textColor,
+          fontSize: 10,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 0.5,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionIcon(IconData icon, Color color, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        padding: const EdgeInsets.all(6),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, size: 16, color: color),
       ),
     );
   }
