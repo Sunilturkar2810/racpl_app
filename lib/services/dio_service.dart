@@ -100,6 +100,7 @@ class DioService {
         endpoint,
         data: data,
         queryParameters: queryParameters,
+        options: _requestOptionsFor(data),
       );
       return fromJson(response.data);
     } on DioException catch (e) {
@@ -121,6 +122,7 @@ class DioService {
         endpoint,
         data: data,
         queryParameters: queryParameters,
+        options: _requestOptionsFor(data),
       );
       return fromJson(response.data);
     } on DioException catch (e) {
@@ -152,6 +154,13 @@ class DioService {
   /// Update base URL (useful for production deployment)
   void updateBaseUrl(String newBaseUrl) {
     _dio.options.baseUrl = newBaseUrl;
+  }
+
+  Options? _requestOptionsFor(dynamic data) {
+    if (data is FormData) {
+      return Options(contentType: 'multipart/form-data');
+    }
+    return null;
   }
 
   // ============= LOGGING METHODS =============

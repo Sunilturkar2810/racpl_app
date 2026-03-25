@@ -83,12 +83,22 @@ class ProjectProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> updateProject(int id, Map<String, dynamic> data) async {
+  Future<void> updateProject(
+    int id,
+    Map<String, dynamic> data, {
+    Map<String, String>? filePaths,
+  }) async {
     _setLoading(true);
     _clearError();
     try {
-      final updated = await _projectService.updateProject(id, data);
       final index = _projects.indexWhere((p) => p.id == id);
+      final existingProject = index != -1 ? _projects[index] : null;
+      final updated = await _projectService.updateProject(
+        id,
+        data,
+        existingProject: existingProject,
+        filePaths: filePaths,
+      );
       if (index != -1) {
         _projects[index] = updated;
       }
@@ -129,13 +139,16 @@ class ProjectProvider extends ChangeNotifier {
 
   void _setLoading(bool value) {
     _isLoading = value;
+    notifyListeners();
   }
 
   void _setError(dynamic error) {
     _error = error is AppError ? error : AppError.fromDioException(error);
+    notifyListeners();
   }
 
   void _clearError() {
     _error = null;
+    notifyListeners();
   }
 }

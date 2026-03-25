@@ -37,6 +37,35 @@ exports.getAllProjects = async (req, res) => {
 };
 
 /* ===========================================
+   GET PROJECT BY ID
+=========================================== */
+exports.getProjectById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const projects = await db.getAll("projects");
+    const project = projects.find(
+      (p) => String(p.id).trim() === String(id).trim(),
+    );
+
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+
+    const normalizedProject = {
+      ...project,
+      id: Number(project.id),
+      client_name: project.client_name === "N/A" ? "" : project.client_name,
+      contact_no: project.contact_no === "N/A" ? "" : project.contact_no,
+    };
+
+    res.json(normalizedProject);
+  } catch (err) {
+    console.error("Project Detail Error:", err);
+    res.status(500).json({ message: "Error fetching project" });
+  }
+};
+
+/* ===========================================
    ✅ CREATE PROJECT
 =========================================== */
 exports.createProject = async (req, res) => {
@@ -165,11 +194,25 @@ exports.editProject = async (req, res) => {
       }
     }
 
+    const mergedProject = {
+      ...existingProject,
+      ...updatedData,
+      id: Number(id),
+      client_name:
+        (updatedData.client_name ?? existingProject.client_name) === "N/A"
+          ? ""
+          : updatedData.client_name ?? existingProject.client_name,
+      contact_no:
+        (updatedData.contact_no ?? existingProject.contact_no) === "N/A"
+          ? ""
+          : updatedData.contact_no ?? existingProject.contact_no,
+    };
+
     await db.updateById("projects", id, updatedData);
 
     res.json({
       message: "✅ Project Updated Successfully",
-      updated: updatedData,
+      updated: mergedProject,
     });
   } catch (err) {
     console.error("Project Edit Error:", err);

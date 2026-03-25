@@ -69,6 +69,79 @@ class Project {
     this.dpcCertificateRemark = '',
   });
 
+  Project copyWith({
+    int? id,
+    String? name,
+    String? address,
+    String? location,
+    String? clientName,
+    String? contactNo,
+    String? status,
+    String? teamLead,
+    String? dateOfApp,
+    String? survey,
+    String? farPurchase,
+    String? buildingPlanApproval,
+    String? buildingPlanRemark,
+    String? revisedBuildingPlan,
+    String? factoryActConsultant,
+    String? firefightingApproval,
+    String? fireNoc,
+    String? labourCess,
+    String? solarHaredanOc,
+    String? awardLetter,
+    String? awardLetterRemark,
+    String? landPaperZoning,
+    String? landPaperZoningRemark,
+    String? soilTesting,
+    String? soilTestingRemark,
+    String? waterTesting,
+    String? waterTestingRemark,
+    String? plotDemarcation,
+    String? plotDemarcationRemark,
+    String? dpcCertificate,
+    String? dpcCertificateRemark,
+  }) {
+    return Project(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      address: address ?? this.address,
+      location: location ?? this.location,
+      clientName: clientName ?? this.clientName,
+      contactNo: contactNo ?? this.contactNo,
+      status: status ?? this.status,
+      teamLead: teamLead ?? this.teamLead,
+      dateOfApp: dateOfApp ?? this.dateOfApp,
+      survey: survey ?? this.survey,
+      farPurchase: farPurchase ?? this.farPurchase,
+      buildingPlanApproval: buildingPlanApproval ?? this.buildingPlanApproval,
+      buildingPlanRemark: buildingPlanRemark ?? this.buildingPlanRemark,
+      revisedBuildingPlan: revisedBuildingPlan ?? this.revisedBuildingPlan,
+      factoryActConsultant:
+          factoryActConsultant ?? this.factoryActConsultant,
+      firefightingApproval:
+          firefightingApproval ?? this.firefightingApproval,
+      fireNoc: fireNoc ?? this.fireNoc,
+      labourCess: labourCess ?? this.labourCess,
+      solarHaredanOc: solarHaredanOc ?? this.solarHaredanOc,
+      awardLetter: awardLetter ?? this.awardLetter,
+      awardLetterRemark: awardLetterRemark ?? this.awardLetterRemark,
+      landPaperZoning: landPaperZoning ?? this.landPaperZoning,
+      landPaperZoningRemark:
+          landPaperZoningRemark ?? this.landPaperZoningRemark,
+      soilTesting: soilTesting ?? this.soilTesting,
+      soilTestingRemark: soilTestingRemark ?? this.soilTestingRemark,
+      waterTesting: waterTesting ?? this.waterTesting,
+      waterTestingRemark: waterTestingRemark ?? this.waterTestingRemark,
+      plotDemarcation: plotDemarcation ?? this.plotDemarcation,
+      plotDemarcationRemark:
+          plotDemarcationRemark ?? this.plotDemarcationRemark,
+      dpcCertificate: dpcCertificate ?? this.dpcCertificate,
+      dpcCertificateRemark:
+          dpcCertificateRemark ?? this.dpcCertificateRemark,
+    );
+  }
+
   factory Project.fromJson(Map<String, dynamic> json) {
     return Project(
       id: int.tryParse(json['id']?.toString() ?? '0') ?? 0,

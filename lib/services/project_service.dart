@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:dio/dio.dart';
 import '../models/project_model.dart';
 import '../models/error_model.dart';
 import 'dio_service.dart';
@@ -58,20 +60,48 @@ class ProjectService {
       return await _dioService.post<Project>(
         '/projects',
         data: data,
-        fromJson: (json) => Project.fromJson(json as Map<String, dynamic>),
+        fromJson: (json) {
+          final map = json as Map<String, dynamic>;
+          final payload = map['project'] as Map<String, dynamic>? ?? map;
+          return Project.fromJson(payload);
+        },
       );
     } catch (e) {
       throw AppError.fromDioException(e);
     }
   }
 
-  Future<Project> updateProject(int id, Map<String, dynamic> data) async {
+  Future<Project> updateProject(
+    int id,
+    Map<String, dynamic> data, {
+    Project? existingProject,
+    Map<String, String>? filePaths,
+  }) async {
     try {
-      return await _dioService.put<Project>(
-        '/projects/$id',
+      final requestData = await _buildProjectPayload(
         data: data,
-        fromJson: (json) => Project.fromJson(json as Map<String, dynamic>),
+        filePaths: filePaths,
       );
+      final response = await _dioService.put<Map<String, dynamic>>(
+        '/projects/$id',
+        data: requestData,
+        fromJson: (json) => json as Map<String, dynamic>,
+      );
+      final updatedPayload =
+          response['updated'] as Map<String, dynamic>? ?? data;
+
+      if (existingProject != null) {
+        return _mergeProjectWithUpdate(
+          existingProject,
+          updatedPayload,
+          filePaths: filePaths,
+        );
+      }
+
+      return Project.fromJson({
+        'id': id,
+        ...updatedPayload,
+      });
     } catch (e) {
       throw AppError.fromDioException(e);
     }
@@ -86,5 +116,81 @@ class ProjectService {
     } catch (e) {
       throw AppError.fromDioException(e);
     }
+  }
+
+  Future<dynamic> _buildProjectPayload({
+    required Map<String, dynamic> data,
+    Map<String, String>? filePaths,
+  }) async {
+    if (filePaths == null || filePaths.isEmpty) {
+      return data;
+    }
+
+    final formData = FormData.fromMap(data);
+    for (final entry in filePaths.entries) {
+      final path = entry.value.trim();
+      if (path.isEmpty) continue;
+
+      formData.files.add(
+        MapEntry(
+          entry.key,
+          await MultipartFile.fromFile(
+            path,
+            filename: path.split(Platform.pathSeparator).last,
+          ),
+        ),
+      );
+    }
+    return formData;
+  }
+
+  Project _mergeProjectWithUpdate(
+    Project project,
+    Map<String, dynamic> data, {
+    Map<String, String>? filePaths,
+  }) {
+    String? value(String key) => data[key]?.toString();
+    String? fileValue(String key) {
+      final path = filePaths?[key];
+      if (path == null || path.trim().isEmpty) return null;
+      return Uri.file(path).toString();
+    }
+
+    return project.copyWith(
+      name: value('name'),
+      address: value('address'),
+      location: value('location'),
+      clientName: value('client_name'),
+      contactNo: value('contact_no'),
+      status: value('status'),
+      teamLead: value('team_lead'),
+      dateOfApp: value('date_of_app'),
+      survey: value('survey'),
+      farPurchase: value('far_purchase'),
+      buildingPlanApproval: value('building_plan_approval'),
+      buildingPlanRemark: value('building_plan_remark'),
+      revisedBuildingPlan: value('revised_building_plan'),
+      factoryActConsultant: value('factory_act_consultant'),
+      firefightingApproval: value('firefighting_approval'),
+      fireNoc: value('fire_noc'),
+      labourCess: value('labour_cess'),
+      solarHaredanOc: value('solar_haredan_oc'),
+      awardLetter: fileValue('award_letter') ?? value('award_letter'),
+      awardLetterRemark: value('award_letter_remark'),
+      landPaperZoning:
+          fileValue('land_paper_zonning') ?? value('land_paper_zonning'),
+      landPaperZoningRemark: value('land_paper_zonning_remark'),
+      soilTesting: fileValue('soil_testing') ?? value('soil_testing'),
+      soilTestingRemark: value('soil_testing_remark'),
+      waterTesting: fileValue('water_testing') ?? value('water_testing'),
+      waterTestingRemark: value('water_testing_remark'),
+      plotDemarcation:
+          fileValue('plot_demarcation_by_govt') ??
+          value('plot_demarcation_by_govt'),
+      plotDemarcationRemark: value('plot_demarcation_by_govt_remark'),
+      dpcCertificate:
+          fileValue('dpc_certificate') ?? value('dpc_certificate'),
+      dpcCertificateRemark: value('dpc_certificate_remark'),
+    );
   }
 }

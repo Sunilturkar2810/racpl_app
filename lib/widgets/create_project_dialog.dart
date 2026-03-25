@@ -161,50 +161,75 @@ class _CreateProjectDialogState extends State<CreateProjectDialog> {
                           const Expanded(
                             child: Text('CLIENT INFORMATION', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.blue)),
                           ),
-                          TextButton.icon(
-                            onPressed: _addClient,
-                            icon: const Icon(Icons.add_circle_outline, size: 16),
-                            label: const Text('ADD CLIENT', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                          Flexible(
+                            child: TextButton.icon(
+                              onPressed: _addClient,
+                              icon: const Icon(Icons.add_circle_outline, size: 16),
+                              label: const Text(
+                                'ADD CLIENT',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                              ),
+                            ),
                           )
                         ],
                       ),
                       const SizedBox(height: 8),
 
                       // Dynamic Client Fields
-                      ...List.generate(_clientNameControllers.length, (index) {
-                        return Container(
-                          margin: const EdgeInsets.only(bottom: 12),
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey.shade200),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(child: _buildTextField('CLIENT NAME ${index + 1}', 'Enter Client Name', _clientNameControllers[index])),
-                              const SizedBox(width: 16),
-                              Expanded(child: _buildTextField('CONTACT NO ${index + 1}', 'Enter Contact Number', _contactNoControllers[index])),
-                              if (_clientNameControllers.length > 1)
-                                IconButton(
-                                  icon: const Icon(Icons.remove_circle, color: Colors.red),
-                                  onPressed: () => _removeClient(index),
-                                  padding: const EdgeInsets.only(left: 8, top: 20),
-                                )
-                            ],
-                          ),
-                        );
-                      }),
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade200),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Column(
+                          children: List.generate(_clientNameControllers.length, (index) {
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                bottom: index == _clientNameControllers.length - 1 ? 0 : 12,
+                              ),
+                              child: Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.shade50,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: Colors.grey.shade200),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _buildTextField('CLIENT NAME ${index + 1}', 'Enter Client Name', _clientNameControllers[index]),
+                                    const SizedBox(height: 12),
+                                    _buildTextField('CONTACT NO ${index + 1}', 'Enter Contact Number', _contactNoControllers[index]),
+                                    if (_clientNameControllers.length > 1)
+                                      Align(
+                                        alignment: Alignment.centerRight,
+                                        child: IconButton(
+                                          icon: const Icon(Icons.remove_circle, color: Colors.red),
+                                          onPressed: () => _removeClient(index),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }),
+                        ),
+                      ),
 
                       const SizedBox(height: 12),
                       
                       // Address & Location
-                      Row(
-                        children: [
-                          Expanded(child: _buildTextField('ADDRESS', 'Project Address', _addressController)),
-                          const SizedBox(width: 16),
-                          Expanded(child: _buildTextField('LOCATION', 'Project Location', _locationController)),
-                        ],
+                      _buildTextField(
+                        'ADDRESS',
+                        'Project Address',
+                        _addressController,
+                        maxLines: 3,
                       ),
+                      const SizedBox(height: 16),
+                      _buildTextField('LOCATION', 'Project Location', _locationController),
                     ],
                   ),
                 ),
@@ -249,7 +274,13 @@ class _CreateProjectDialogState extends State<CreateProjectDialog> {
     );
   }
 
-  Widget _buildTextField(String label, String hint, TextEditingController controller, {bool isRequired = false}) {
+  Widget _buildTextField(
+    String label,
+    String hint,
+    TextEditingController controller, {
+    bool isRequired = false,
+    int maxLines = 1,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -260,6 +291,7 @@ class _CreateProjectDialogState extends State<CreateProjectDialog> {
         const SizedBox(height: 6),
         TextFormField(
           controller: controller,
+          maxLines: maxLines,
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 13),

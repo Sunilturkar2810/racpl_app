@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:file_selector/file_selector.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../providers/project_provider.dart';
 import '../models/project_model.dart';
-// If file upload is implemented fully with backend, we can use file_selector here
-// import 'package:file_selector/file_selector.dart';
 
 class EditProjectDialog extends StatefulWidget {
   final Project project;
@@ -38,10 +39,9 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
   String _status = 'Award to Start';
   String _teamLead = 'Select Team Lead';
 
-  // For documents, we will mock the visual state.
-  // In a real scenario, this would hold XFile objects.
   Map<String, bool> _hasFile = {};
   Map<String, TextEditingController> _docRemarkControllers = {};
+  final Map<String, XFile?> _selectedFiles = {};
 
   bool _isLoading = false;
 
@@ -53,6 +53,15 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
     'PLOT DEMARCATION BY GOVT',
     'DPC CERTIFICATE'
   ];
+
+  static const Map<String, String> _docFieldMap = {
+    'AWARD LETTER': 'award_letter',
+    'LAND PAPER / ZONING': 'land_paper_zonning',
+    'SOIL TESTING': 'soil_testing',
+    'WATER TESTING': 'water_testing',
+    'PLOT DEMARCATION BY GOVT': 'plot_demarcation_by_govt',
+    'DPC CERTIFICATE': 'dpc_certificate',
+  };
 
   @override
   void initState() {
@@ -149,6 +158,98 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
     }
   }
 
+  Future<void> _pickDateOfApp() async {
+    final initialDate = _parseDate(_dateOfAppController.text) ?? DateTime.now();
+    final pickedDate = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+
+    if (pickedDate != null && mounted) {
+      setState(() {
+        _dateOfAppController.text = DateFormat('yyyy-MM-dd').format(pickedDate);
+      });
+    }
+  }
+
+  DateTime? _parseDate(String value) {
+    final trimmed = value.trim();
+    if (trimmed.isEmpty) return null;
+
+    try {
+      return DateTime.parse(trimmed);
+    } catch (_) {
+      try {
+        return DateFormat('dd-MM-yyyy').parseStrict(trimmed);
+      } catch (_) {
+        try {
+          return DateFormat('yyyy-MM-dd').parseStrict(trimmed);
+        } catch (_) {
+          return null;
+        }
+      }
+    }
+  }
+
+  Future<void> _pickDocument(String title) async {
+    const typeGroup = XTypeGroup(
+      label: 'documents',
+      extensions: ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
+    );
+
+    final file = await openFile(acceptedTypeGroups: [typeGroup]);
+    if (file == null || !mounted) return;
+
+    setState(() {
+      _selectedFiles[title] = file;
+      _hasFile[title] = true;
+    });
+  }
+
+  String _documentUrl(String title) {
+    switch (title) {
+      case 'AWARD LETTER':
+        return widget.project.awardLetter;
+      case 'LAND PAPER / ZONING':
+        return widget.project.landPaperZoning;
+      case 'SOIL TESTING':
+        return widget.project.soilTesting;
+      case 'WATER TESTING':
+        return widget.project.waterTesting;
+      case 'PLOT DEMARCATION BY GOVT':
+        return widget.project.plotDemarcation;
+      case 'DPC CERTIFICATE':
+        return widget.project.dpcCertificate;
+      default:
+        return '';
+    }
+  }
+
+  Future<void> _viewDocument(String title) async {
+    final url = _documentUrl(title).trim();
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Document save hone ke baad view hoga.'),
+          ),
+        );
+      }
+      return;
+    }
+
+    final uri = Uri.tryParse(url);
+    if (uri == null ||
+        !await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Unable to open document')),
+      );
+    }
+  }
+
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
@@ -185,8 +286,21 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
       'dpc_certificate_remark': _docRemarkControllers['DPC CERTIFICATE']!.text.trim(),
     };
 
+    final filePaths = <String, String>{};
+    for (final entry in _selectedFiles.entries) {
+      final apiKey = _docFieldMap[entry.key];
+      final file = entry.value;
+      if (apiKey != null && file != null && file.path.isNotEmpty) {
+        filePaths[apiKey] = file.path;
+      }
+    }
+
     try {
-      await provider.updateProject(widget.project.id, data);
+      await provider.updateProject(
+        widget.project.id,
+        data,
+        filePaths: filePaths,
+      );
       if (mounted) {
         Navigator.pop(context, true);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -266,42 +380,71 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
                           const Expanded(
                             child: Text('CLIENT INFORMATION', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.blue)),
                           ),
-                          TextButton.icon(
-                            onPressed: _addClient,
-                            icon: const Icon(Icons.add_circle_outline, size: 16),
-                            label: const Text('ADD CLIENT', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                          Flexible(
+                            child: TextButton.icon(
+                              onPressed: _addClient,
+                              icon: const Icon(Icons.add_circle_outline, size: 16),
+                              label: const Text(
+                                'ADD CLIENT',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                              ),
+                            ),
                           )
                         ],
                       ),
                       const SizedBox(height: 8),
 
-                      ...List.generate(_clientNameControllers.length, (index) {
-                        return Container(
-                          margin: const EdgeInsets.only(bottom: 12),
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade200), borderRadius: BorderRadius.circular(12)),
-                          child: Row(
-                            children: [
-                              Expanded(child: _buildTextField('CLIENT NAME ${index + 1}', 'Enter Client Name', _clientNameControllers[index])),
-                              const SizedBox(width: 16),
-                              Expanded(child: _buildTextField('CONTACT NO ${index + 1}', 'Enter Contact Number', _contactNoControllers[index])),
-                              if (_clientNameControllers.length > 1)
-                                IconButton(
-                                  icon: const Icon(Icons.remove_circle, color: Colors.red),
-                                  onPressed: () => _removeClient(index),
-                                )
-                            ],
-                          ),
-                        );
-                      }),
-                      const SizedBox(height: 12),
-                      Row(
-                        children: [
-                          Expanded(child: _buildTextField('ADDRESS', 'Project Address', _addressController)),
-                          const SizedBox(width: 16),
-                          Expanded(child: _buildTextField('LOCATION', 'Project Location', _locationController)),
-                        ],
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade200),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Column(
+                          children: List.generate(_clientNameControllers.length, (index) {
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                bottom: index == _clientNameControllers.length - 1 ? 0 : 12,
+                              ),
+                              child: Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.shade50,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: Colors.grey.shade200),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _buildTextField('CLIENT NAME ${index + 1}', 'Enter Client Name', _clientNameControllers[index]),
+                                    const SizedBox(height: 12),
+                                    _buildTextField('CONTACT NO ${index + 1}', 'Enter Contact Number', _contactNoControllers[index]),
+                                    if (_clientNameControllers.length > 1)
+                                      Align(
+                                        alignment: Alignment.centerRight,
+                                        child: IconButton(
+                                          icon: const Icon(Icons.remove_circle, color: Colors.red),
+                                          onPressed: () => _removeClient(index),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }),
+                        ),
                       ),
+                      const SizedBox(height: 12),
+                      _buildTextField(
+                        'ADDRESS',
+                        'Project Address',
+                        _addressController,
+                        maxLines: 3,
+                      ),
+                      const SizedBox(height: 16),
+                      _buildTextField('LOCATION', 'Project Location', _locationController),
                       const SizedBox(height: 24),
 
                       // DETAILED INFORMATION
@@ -323,7 +466,14 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
                         ],
                       ),
                       const SizedBox(height: 16),
-                      _buildTextField('DATE OF APP', 'dd-mm-yyyy', _dateOfAppController, suffixIcon: Icons.calendar_today_outlined),
+                      _buildTextField(
+                        'DATE OF APP',
+                        'yyyy-mm-dd',
+                        _dateOfAppController,
+                        suffixIcon: Icons.calendar_today_outlined,
+                        readOnly: true,
+                        onTap: _pickDateOfApp,
+                      ),
                       const SizedBox(height: 16),
                       Row(
                         children: [
@@ -416,7 +566,16 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
     );
   }
 
-  Widget _buildTextField(String label, String hint, TextEditingController controller, {bool isRequired = false, IconData? suffixIcon}) {
+  Widget _buildTextField(
+    String label,
+    String hint,
+    TextEditingController controller, {
+    bool isRequired = false,
+    IconData? suffixIcon,
+    bool readOnly = false,
+    VoidCallback? onTap,
+    int maxLines = 1,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -424,6 +583,9 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
         const SizedBox(height: 6),
         TextFormField(
           controller: controller,
+          readOnly: readOnly,
+          onTap: onTap,
+          maxLines: maxLines,
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 13),
@@ -512,7 +674,15 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(actualValue, style: const TextStyle(fontSize: 13, color: Colors.black87)),
+                Expanded(
+                  child: Text(
+                    actualValue,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontSize: 13, color: Colors.black87),
+                  ),
+                ),
+                const SizedBox(width: 8),
                 const Icon(Icons.keyboard_arrow_down, size: 20, color: Colors.black87),
               ],
             ),
@@ -524,6 +694,7 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
 
   Widget _buildDocUploadBlock(String title) {
     final bool uploaded = _hasFile[title] ?? false;
+    final XFile? selectedFile = _selectedFiles[title];
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
@@ -559,12 +730,7 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
               Expanded(
                 flex: 4,
                 child: InkWell(
-                  onTap: () {
-                    // Pick file logic placeholder
-                    setState(() {
-                      _hasFile[title] = !(_hasFile[title] ?? false); // Toggle visually
-                    });
-                  },
+                  onTap: () => _pickDocument(title),
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     decoration: BoxDecoration(
@@ -577,7 +743,11 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
                       children: [
                         Expanded(
                           child: Text(
-                            uploaded ? 'File Uploaded ✓' : 'Choose File',
+                            selectedFile != null
+                                ? selectedFile.name
+                                : uploaded
+                                ? 'File Uploaded'
+                                : 'Choose File',
                             style: TextStyle(color: uploaded ? Colors.black87 : Colors.grey.shade500, fontSize: 13),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -595,7 +765,7 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
                     decoration: BoxDecoration(color: Colors.purple.shade50, borderRadius: BorderRadius.circular(8)),
                     child: IconButton(
                       icon: Icon(Icons.remove_red_eye, color: Colors.purple.shade300, size: 20),
-                      onPressed: () {},
+                      onPressed: () => _viewDocument(title),
                     ),
                   ),
                 ),

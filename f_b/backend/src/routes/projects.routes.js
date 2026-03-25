@@ -7,6 +7,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 // Get All Projects
 router.get("/", verifyToken, projectController.getAllProjects);
+router.get("/:id", verifyToken, projectController.getProjectById);
 
 // Create Project
 const uploadFields = upload.fields([

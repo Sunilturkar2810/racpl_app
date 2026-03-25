@@ -4,6 +4,7 @@ import '../../providers/project_provider.dart';
 import '../../models/project_model.dart';
 import '../../widgets/create_project_dialog.dart';
 import '../../widgets/edit_project_dialog.dart';
+import '../../widgets/project_details_dialog.dart';
 
 class ProjectListScreen extends StatefulWidget {
   const ProjectListScreen({super.key});
@@ -29,12 +30,12 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
       appBar: AppBar(
         title: const Text(
           'Project Management',
-          style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: const Color(0xFF137FEC),
         centerTitle: true,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black87),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Consumer<ProjectProvider>(
         builder: (context, provider, _) {
@@ -363,7 +364,12 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                _buildActionIcon(Icons.info_outline, Colors.blue.shade400, () {}),
+                _buildActionIcon(Icons.remove_red_eye_outlined, Colors.indigo.shade400, () {
+                  showDialog(
+                    context: context,
+                    builder: (_) => ProjectDetailsDialog(project: project),
+                  );
+                }),
                 const SizedBox(width: 8),
                 _buildActionIcon(Icons.edit_outlined, Colors.orange.shade400, () {
                   showDialog(

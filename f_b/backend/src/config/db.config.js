@@ -78,7 +78,7 @@ const clearSheet = async (sheetName) => {
 const updateById = async (sheetName, id, updatedData) => {
   const res = await sheets.spreadsheets.values.get({
     spreadsheetId: SPREADSHEET_ID,
-    range: `${sheetName}!A:Z`,
+    range: `${sheetName}!A:ZZ`,
   });
 
   const rows = res.data.values;
