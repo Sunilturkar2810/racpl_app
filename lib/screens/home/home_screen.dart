@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
-import 'dashboard_screen.dart';
-import '../features/delegation_list_screen.dart';
+
 import '../features/checklist_list_screen.dart';
-import '../features/ticket_list_screen.dart';
-import '../features/mom_list_screen.dart';
+import '../features/delegation_list_screen.dart';
 import '../features/expense_list_screen.dart';
-import '../features/vendor_list_screen.dart';
+import '../features/mom_list_screen.dart';
 import '../features/project_list_screen.dart';
 import '../features/score_list_screen.dart';
+import '../features/ticket_list_screen.dart';
+import '../features/vendor_list_screen.dart';
 import '../profile/profile_screen.dart';
+import '../profile/settings_screen.dart';
+import 'dashboard_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -31,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
     'Expense',
     'Help Ticket',
     'Profile',
+    'Settings',
   ];
 
   final List<IconData> _icons = [
@@ -44,6 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
     Icons.receipt,
     Icons.support_agent,
     Icons.person,
+    Icons.settings,
   ];
 
   void _showMoreMenu() {
@@ -60,13 +64,14 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Custom AppBar for Bottom Sheet
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
                 decoration: BoxDecoration(
                   color: Theme.of(context).primaryColor,
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(28),
+                  ),
                 ),
                 child: Stack(
                   alignment: Alignment.center,
@@ -91,7 +96,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             color: Colors.white.withOpacity(0.2),
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(Icons.close, size: 20, color: Colors.white),
+                          child: const Icon(
+                            Icons.close,
+                            size: 20,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
@@ -99,7 +108,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               const SizedBox(height: 32),
-              // Grid Menu
               Flexible(
                 child: Padding(
                   padding: const EdgeInsets.only(left: 20, right: 20, bottom: 32),
@@ -107,55 +115,58 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: EdgeInsets.zero,
                     shrinkWrap: true,
                     physics: const BouncingScrollPhysics(),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4,
-                      mainAxisSpacing: 24,
-                      crossAxisSpacing: 8,
-                      childAspectRatio: 0.7,
-                    ),
-                  itemCount: _labels.length - 3, // Remaining items after first 3
-                  itemBuilder: (context, index) {
-                    final actualIndex = index + 3;
-                    return InkWell(
-                      borderRadius: BorderRadius.circular(16),
-                      onTap: () {
-                        Navigator.pop(context);
-                        setState(() => _selectedIndex = actualIndex);
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(14),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).primaryColor.withOpacity(0.08),
-                              shape: BoxShape.circle,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 4,
+                          mainAxisSpacing: 24,
+                          crossAxisSpacing: 8,
+                          childAspectRatio: 0.7,
+                        ),
+                    itemCount: _labels.length - 3,
+                    itemBuilder: (context, index) {
+                      final actualIndex = index + 3;
+                      return InkWell(
+                        borderRadius: BorderRadius.circular(16),
+                        onTap: () {
+                          Navigator.pop(context);
+                          setState(() => _selectedIndex = actualIndex);
+                        },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(14),
+                              decoration: BoxDecoration(
+                                color: Theme.of(
+                                  context,
+                                ).primaryColor.withOpacity(0.08),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                _icons[actualIndex],
+                                color: Theme.of(context).primaryColor,
+                                size: 26,
+                              ),
                             ),
-                            child: Icon(
-                              _icons[actualIndex], 
-                              color: Theme.of(context).primaryColor,
-                              size: 26,
+                            const SizedBox(height: 8),
+                            Text(
+                              _labels[actualIndex],
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            _labels[actualIndex],
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 12, 
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black87,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
-                    );
-                  },
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
-            ),
             ],
           ),
         );
@@ -186,7 +197,10 @@ class _HomeScreenState extends State<HomeScreen> {
             BottomNavigationBarItem(icon: Icon(_icons[0]), label: _labels[0]),
             BottomNavigationBarItem(icon: Icon(_icons[1]), label: _labels[1]),
             BottomNavigationBarItem(icon: Icon(_icons[2]), label: _labels[2]),
-            const BottomNavigationBarItem(icon: Icon(Icons.more_horiz), label: 'More'),
+            const BottomNavigationBarItem(
+              icon: Icon(Icons.more_horiz),
+              label: 'More',
+            ),
           ],
         ),
       ),
@@ -215,6 +229,8 @@ class _HomeScreenState extends State<HomeScreen> {
         return const TicketListScreen();
       case 9:
         return const ProfileScreen();
+      case 10:
+        return const SettingsScreen();
       default:
         return const DashboardScreen();
     }

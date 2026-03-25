@@ -23,7 +23,9 @@ import 'package:racpl/providers/vendor_provider.dart';
 import 'package:racpl/providers/project_provider.dart';
 import 'package:racpl/providers/score_provider.dart';
 import 'package:racpl/providers/dashboard_provider.dart';
+import 'package:racpl/providers/help_ticket_config_provider.dart';
 import 'package:racpl/services/dashboard_service.dart';
+import 'package:racpl/services/help_ticket_config_service.dart';
 import 'screens/auth/login_screen.dart';
 
 void main() async {
@@ -134,6 +136,14 @@ class MyApp extends StatelessWidget {
             final dioService = context.read<DioService>();
             return ScoreProvider(
               scoreService: ScoreService(dioService: dioService),
+            );
+          },
+        ),
+        ChangeNotifierProvider<HelpTicketConfigProvider>(
+          create: (context) {
+            final dioService = context.read<DioService>();
+            return HelpTicketConfigProvider(
+              service: HelpTicketConfigService(dioService: dioService),
             );
           },
         ),
