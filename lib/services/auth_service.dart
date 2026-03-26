@@ -14,7 +14,7 @@ class AuthService {
       _storage = storage;
 
   /// Register new employee
-  Future<AuthResponse> signup({
+  Future<String> registerUser({
     required String firstName,
     required String lastName,
     required String email,
@@ -35,24 +35,13 @@ class AuthService {
       joiningDate: joiningDate,
     );
 
-    final response = await _dioService.post<AuthResponse>(
+    final response = await _dioService.post<Map<String, dynamic>>(
       '/auth/register',
       data: request.toJson(),
-      fromJson: (json) => AuthResponse.fromJson(json as Map<String, dynamic>),
+      fromJson: (json) => json as Map<String, dynamic>,
     );
 
-    // Save user data locally
-    await _storage.saveUserData(
-      userId: response.user.id,
-      email: response.user.email,
-      name: response.user.fullName,
-      role: response.user.role,
-    );
-
-    // Save token
-    await _storage.saveToken(response.token);
-
-    return response;
+    return response['message']?.toString() ?? 'User registered successfully';
   }
 
   /// Login user with email and password

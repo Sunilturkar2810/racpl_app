@@ -11,6 +11,7 @@ class AuthProvider extends ChangeNotifier {
   String? _token;
   bool _isLoading = false;
   AppError? _error;
+  String? _lastSuccessMessage;
 
   AuthProvider({AuthService? authService}) {
     if (authService != null) {
@@ -26,6 +27,7 @@ class AuthProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
 
   AppError? get error => _error;
+  String? get lastSuccessMessage => _lastSuccessMessage;
 
   bool get isAuthenticated => _token != null && _currentUser != null;
 
@@ -76,6 +78,7 @@ class AuthProvider extends ChangeNotifier {
 
     _isLoading = true;
     _error = null;
+    _lastSuccessMessage = null;
     notifyListeners();
 
     try {
@@ -120,10 +123,11 @@ class AuthProvider extends ChangeNotifier {
   }) async {
     _isLoading = true;
     _error = null;
+    _lastSuccessMessage = null;
     notifyListeners();
 
     try {
-      final response = await _authService.signup(
+      _lastSuccessMessage = await _authService.registerUser(
         firstName: firstName,
         lastName: lastName,
         email: email,
@@ -133,9 +137,6 @@ class AuthProvider extends ChangeNotifier {
         department: department,
         joiningDate: joiningDate,
       );
-
-      _token = response.token;
-      _currentUser = response.user;
 
       notifyListeners();
       return true;
@@ -159,6 +160,7 @@ class AuthProvider extends ChangeNotifier {
       _currentUser = null;
       _token = null;
       _error = null;
+      _lastSuccessMessage = null;
     } catch (e) {
       _error = e is AppError ? e : AppError(message: e.toString());
     }
@@ -170,6 +172,7 @@ class AuthProvider extends ChangeNotifier {
   /// Update user theme
   Future<void> updateTheme(String theme) async {
     try {
+      _error = null;
       await _authService.updateTheme(theme);
 
       if (_currentUser != null) {
@@ -185,6 +188,11 @@ class AuthProvider extends ChangeNotifier {
   /// Clear error
   void clearError() {
     _error = null;
+    notifyListeners();
+  }
+
+  void clearSuccessMessage() {
+    _lastSuccessMessage = null;
     notifyListeners();
   }
 

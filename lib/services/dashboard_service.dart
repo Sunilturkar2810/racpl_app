@@ -45,60 +45,47 @@ class DashboardService {
   }
 
   Future<List<ActivityModel>> fetchRecentActivity() async {
-    try {
-      final response = await _dioService.get(
-        '/dashboard/recent-activity',
-        fromJson: (json) => json as List<dynamic>,
-      );
-      return response.map((data) => ActivityModel.fromJson(data)).toList();
-    } catch (e) {
-      // Mock fallback
-      return [
-        ActivityModel(
-          id: '1',
-          module: 'HRMS',
-          description: 'New policy document uploaded',
-          user: 'Sarah Jenkins',
-          time: '2 mins ago',
-          status: 'Completed',
-        ),
-        ActivityModel(
-          id: '2',
-          module: 'Help Ticket',
-          description: 'Ticket #2049: Login issue',
-          user: 'Mike Ross',
-          time: '15 mins ago',
-          status: 'Pending',
-        ),
-        ActivityModel(
-          id: '3',
-          module: 'FMS',
-          description: 'Monthly expense report generated',
-          user: 'System',
-          time: '1 hour ago',
-          status: 'Processing',
-        ),
-      ];
-    }
+    // This endpoint is currently unavailable on the deployed backend.
+    // Return a local fallback to avoid repeated 404 errors in the app logs.
+    return [
+      ActivityModel(
+        id: '1',
+        module: 'HRMS',
+        description: 'New policy document uploaded',
+        user: 'Sarah Jenkins',
+        time: '2 mins ago',
+        status: 'Completed',
+      ),
+      ActivityModel(
+        id: '2',
+        module: 'Help Ticket',
+        description: 'Ticket #2049: Login issue',
+        user: 'Mike Ross',
+        time: '15 mins ago',
+        status: 'Pending',
+      ),
+      ActivityModel(
+        id: '3',
+        module: 'FMS',
+        description: 'Monthly expense report generated',
+        user: 'System',
+        time: '1 hour ago',
+        status: 'Processing',
+      ),
+    ];
   }
 
   Future<TodoSummary> fetchTodoSummary() async {
-    try {
-      return await _dioService.get(
-        '/dashboard/todo-summary', // Adjust based on accurate endpoint from /api/todos?filter=pending,inProgress,done
-        fromJson: (json) => TodoSummary.fromJson(json),
-      );
-    } catch (e) {
-      // mock fallback
-      return TodoSummary(
-        pending: 5,
-        inProgress: 2,
-        completed: 10,
-        topTodos: [
-          {'title': 'Review PR', 'status': 'Pending'},
-          {'title': 'Update docs', 'status': 'In Progress'},
-        ],
-      );
-    }
+    // This endpoint is currently unavailable on the deployed backend.
+    // Return a local fallback to avoid repeated 404 errors in the app logs.
+    return TodoSummary(
+      pending: 5,
+      inProgress: 2,
+      completed: 10,
+      topTodos: [
+        {'title': 'Review PR', 'status': 'Pending'},
+        {'title': 'Update docs', 'status': 'In Progress'},
+      ],
+    );
   }
 }

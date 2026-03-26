@@ -11,6 +11,7 @@ class HelpTicketConfigProvider extends ChangeNotifier {
     : _service = service;
 
   List<HelpTicketHoliday> _holidays = [];
+  HelpTicketSettings _settings = HelpTicketSettings.empty();
   bool _isLoading = false;
   bool _isSaving = false;
   int? _deletingHolidayId;
@@ -18,6 +19,7 @@ class HelpTicketConfigProvider extends ChangeNotifier {
   AppError? _error;
 
   List<HelpTicketHoliday> get holidays => _holidays;
+  HelpTicketSettings get settings => _settings;
   bool get isLoading => _isLoading;
   bool get isSaving => _isSaving;
   int? get deletingHolidayId => _deletingHolidayId;
@@ -34,6 +36,7 @@ class HelpTicketConfigProvider extends ChangeNotifier {
 
     try {
       final response = await _service.getConfig();
+      _settings = response.settings;
       _holidays = response.holidays;
       _hasLoaded = true;
     } catch (e) {
@@ -61,6 +64,39 @@ class HelpTicketConfigProvider extends ChangeNotifier {
       );
       _holidays = [..._holidays, holiday]
         ..sort((a, b) => a.holidayDate.compareTo(b.holidayDate));
+      return true;
+    } catch (e) {
+      _setError(e);
+      return false;
+    } finally {
+      _isSaving = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> updateSettings({
+    required int stage2TatHours,
+    required int stage4TatHours,
+    required int stage5TatHours,
+    required String officeStartTime,
+    required String officeEndTime,
+    required List<int> workingDays,
+  }) async {
+    if (_isSaving) return false;
+
+    _isSaving = true;
+    _clearError(notify: false);
+    notifyListeners();
+
+    try {
+      _settings = await _service.updateConfig(
+        stage2TatHours: stage2TatHours,
+        stage4TatHours: stage4TatHours,
+        stage5TatHours: stage5TatHours,
+        officeStartTime: officeStartTime,
+        officeEndTime: officeEndTime,
+        workingDays: workingDays,
+      );
       return true;
     } catch (e) {
       _setError(e);
