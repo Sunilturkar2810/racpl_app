@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:racpl/theme/app_colors.dart';
 
 class TicketHistoryDialog extends StatelessWidget {
   final int ticketId;
@@ -24,8 +25,13 @@ class TicketHistoryDialog extends StatelessWidget {
         constraints: BoxConstraints(maxWidth: 800, maxHeight: size.height * 0.85),
         child: Column(
           children: [
-            Padding(
+            Container(
+              width: double.infinity,
               padding: const EdgeInsets.fromLTRB(18, 16, 10, 12),
+              decoration: const BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -38,21 +44,22 @@ class TicketHistoryDialog extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           'Ticket ID: $ticketDisplayId',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 14,
-                            color: Colors.grey.shade600,
+                            color: Colors.white70,
                           ),
                         ),
                       ],
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.close),
+                    icon: const Icon(Icons.close, color: Colors.white),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ],
@@ -145,7 +152,7 @@ class TicketHistoryDialog extends StatelessWidget {
                       Text(
                         title.toUpperCase(),
                         style: const TextStyle(
-                          color: Color(0xFF1A73E8),
+                          color: AppColors.primary,
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
@@ -213,7 +220,7 @@ class TicketHistoryDialog extends StatelessWidget {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 11,
-                        color: Colors.blueGrey,
+                        color: AppColors.primary,
                       ),
                     ),
                   ),
@@ -224,7 +231,7 @@ class TicketHistoryDialog extends StatelessWidget {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 11,
-                        color: Colors.blueGrey,
+                        color: AppColors.primary,
                       ),
                     ),
                   ),
@@ -236,7 +243,7 @@ class TicketHistoryDialog extends StatelessWidget {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 11,
-                        color: Colors.blueGrey,
+                        color: AppColors.primary,
                       ),
                     ),
                   ),

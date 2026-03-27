@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'dart:developer' as developer;
 import 'package:image_picker/image_picker.dart';
+import 'package:racpl/theme/app_colors.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/ticket_provider.dart';
 import '../../services/dio_service.dart';
@@ -249,12 +250,17 @@ class _CreateTicketDialogState extends State<CreateTicketDialog> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Header with close button
-            Padding(
+            Container(
+              width: double.infinity,
               padding: const EdgeInsets.only(
                 left: 20,
                 right: 8,
                 top: 16,
                 bottom: 8,
+              ),
+              decoration: const BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -264,12 +270,12 @@ class _CreateTicketDialogState extends State<CreateTicketDialog> {
                       Container(
                         padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF0066FF).withOpacity(0.1),
+                          color: Colors.white.withOpacity(0.14),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
                           Icons.add_task,
-                          color: Color(0xFF0066FF),
+                          color: Colors.white,
                           size: 24,
                         ),
                       ),
@@ -279,12 +285,13 @@ class _CreateTicketDialogState extends State<CreateTicketDialog> {
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
                       ),
                     ],
                   ),
                   IconButton(
-                    icon: Icon(Icons.close, color: Colors.grey[500]),
+                    icon: const Icon(Icons.close, color: Colors.white),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ],
@@ -399,7 +406,7 @@ class _CreateTicketDialogState extends State<CreateTicketDialog> {
                                   ),
                                 ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF0066FF),
+                            backgroundColor: AppColors.primary,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -561,7 +568,7 @@ class _CreateTicketDialogState extends State<CreateTicketDialog> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: Color(0xFF0066FF)),
+          borderSide: const BorderSide(color: AppColors.primary),
         ),
       ),
     );

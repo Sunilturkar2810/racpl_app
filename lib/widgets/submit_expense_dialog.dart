@@ -3,13 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:racpl/theme/app_colors.dart';
 import '../providers/expense_provider.dart';
 import '../models/expense_model.dart';
 
 class SubmitExpenseDialog extends StatefulWidget {
   final Expense? expense;
+  final bool asBottomSheet;
   
-  const SubmitExpenseDialog({Key? key, this.expense}) : super(key: key);
+  const SubmitExpenseDialog({
+    Key? key,
+    this.expense,
+    this.asBottomSheet = false,
+  }) : super(key: key);
 
   @override
   State<SubmitExpenseDialog> createState() => _SubmitExpenseDialogState();
@@ -277,54 +283,61 @@ class _SubmitExpenseDialogState extends State<SubmitExpenseDialog> {
         (_travelType == 'Self Car (9rs/KM)' ||
             _travelType == 'Self Bike (5rs/KM)');
 
-    return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      insetPadding: const EdgeInsets.all(16),
-      child: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: Container(
-          width: MediaQuery.of(context).size.width * 0.9,
-          padding: const EdgeInsets.all(24),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+    final content = GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(24),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
                 // Header
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          widget.expense != null ? 'Edit Expense' : 'Submit Expense',
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.expense != null
+                                ? 'Edit Expense'
+                                : 'Submit Expense',
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'EXPENSE REQUEST FORM',
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey.shade500,
-                            letterSpacing: 1.2,
+                          const SizedBox(height: 4),
+                          const Text(
+                            'EXPENSE REQUEST FORM',
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white70,
+                              letterSpacing: 1.2,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.close, color: Colors.grey),
-                      onPressed: () => Navigator.pop(context),
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                    ),
-                  ],
+                        ],
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close, color: Colors.white),
+                        onPressed: () => Navigator.pop(context),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                      ),
+                    ],
+                  ),
                 ),
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 12.0),
@@ -632,16 +645,19 @@ class _SubmitExpenseDialogState extends State<SubmitExpenseDialog> {
                               icon: const Icon(Icons.upload_file, size: 18),
                               label: const Text('Choose file'),
                               style: TextButton.styleFrom(
-                                foregroundColor: Colors.blueAccent,
+                                foregroundColor: AppColors.primary,
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 12,
                                   vertical: 8,
                                 ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8),
-                                  side: BorderSide(color: Colors.blue.shade100),
+                                  side: BorderSide(
+                                    color: AppColors.primary.withOpacity(0.2),
+                                  ),
                                 ),
-                                backgroundColor: Colors.blue.shade50,
+                                backgroundColor:
+                                    AppColors.primary.withOpacity(0.08),
                               ),
                             ),
                             const SizedBox(width: 12),
@@ -700,7 +716,7 @@ class _SubmitExpenseDialogState extends State<SubmitExpenseDialog> {
                       child: ElevatedButton(
                         onPressed: _isSubmitting ? null : _submit,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blueAccent,
+                          backgroundColor: AppColors.primary,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           elevation: 0,
@@ -728,10 +744,32 @@ class _SubmitExpenseDialogState extends State<SubmitExpenseDialog> {
                     ),
                   ],
                 ),
-              ],
-            ),
+            ],
           ),
         ),
+      ),
+    );
+
+    if (widget.asBottomSheet) {
+      return SafeArea(
+        top: false,
+        child: Material(
+          color: Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height * 0.8,
+            child: content,
+          ),
+        ),
+      );
+    }
+
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      insetPadding: const EdgeInsets.all(16),
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.9,
+        child: content,
       ),
     );
   }
@@ -744,7 +782,7 @@ class _SubmitExpenseDialogState extends State<SubmitExpenseDialog> {
         style: const TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.bold,
-          color: Colors.blueGrey,
+          color: AppColors.primary,
           letterSpacing: 0.5,
         ),
       ),
@@ -766,7 +804,7 @@ class _SubmitExpenseDialogState extends State<SubmitExpenseDialog> {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
-        borderSide: const BorderSide(color: Colors.blueAccent),
+        borderSide: const BorderSide(color: AppColors.primary),
       ),
     );
   }

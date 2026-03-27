@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:racpl/theme/app_colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class TicketDetailDialog extends StatelessWidget {
@@ -25,8 +26,13 @@ class TicketDetailDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Padding(
+            Container(
+              width: double.infinity,
               padding: const EdgeInsets.fromLTRB(20, 18, 12, 14),
+              decoration: const BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -41,7 +47,7 @@ class TicketDetailDialog extends StatelessWidget {
                           children: [
                             const Icon(
                               Icons.confirmation_number_outlined,
-                              color: Color(0xFF2563EB),
+                              color: Colors.white,
                               size: 20,
                             ),
                             Text(
@@ -52,7 +58,10 @@ class TicketDetailDialog extends StatelessWidget {
                               style: Theme.of(context)
                                   .textTheme
                                   .titleLarge
-                                  ?.copyWith(fontWeight: FontWeight.w800),
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.w800,
+                                    color: Colors.white,
+                                  ),
                             ),
                             _buildStatusChip(statusText),
                           ],
@@ -62,7 +71,7 @@ class TicketDetailDialog extends StatelessWidget {
                           'Ticket Details',
                           style:
                               Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Colors.grey.shade600,
+                                    color: Colors.white70,
                                     fontWeight: FontWeight.w600,
                                   ),
                         ),
@@ -70,7 +79,7 @@ class TicketDetailDialog extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.close),
+                    icon: const Icon(Icons.close, color: Colors.white),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ],
@@ -199,13 +208,13 @@ class TicketDetailDialog extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: const Color(0xFFDBEAFE),
+        color: Colors.white.withOpacity(0.14),
         borderRadius: BorderRadius.circular(999),
       ),
       child: Text(
         statusText,
         style: const TextStyle(
-          color: Color(0xFF2563EB),
+          color: Colors.white,
           fontWeight: FontWeight.w700,
           fontSize: 11,
         ),
@@ -255,11 +264,11 @@ class TicketDetailDialog extends StatelessWidget {
           margin: const EdgeInsets.only(top: 2),
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.primary.withOpacity(0.08),
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.grey.shade200),
+            border: Border.all(color: AppColors.primary.withOpacity(0.15)),
           ),
-          child: Icon(icon, size: 16, color: const Color(0xFF2563EB)),
+          child: Icon(icon, size: 16, color: AppColors.primary),
         ),
         const SizedBox(width: 10),
         Expanded(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:racpl/theme/app_colors.dart';
 import '../../providers/ticket_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../models/ticket_model.dart';
@@ -48,6 +49,7 @@ class _TicketListScreenState extends State<TicketListScreen>
         title: const Text('Help Tickets'),
         centerTitle: true,
         elevation: 0,
+        backgroundColor: AppColors.primary,
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: Colors.white,
@@ -112,7 +114,7 @@ class _TicketListScreenState extends State<TicketListScreen>
             builder: (context) => const CreateTicketDialog(),
           );
         },
-        backgroundColor: Colors.blue,
+        backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         icon: const Icon(Icons.add),
         label: const Text(
@@ -139,7 +141,7 @@ class _TicketListScreenState extends State<TicketListScreen>
                   Icon(
                     Icons.list_alt,
                     size: 20,
-                    color: isDark ? Colors.blue[300] : Colors.blue[700],
+                    color: isDark ? Colors.white70 : AppColors.primary,
                   ),
                   const SizedBox(width: 8),
                   const Text(
@@ -403,8 +405,8 @@ class _TicketCard extends StatelessWidget {
                         _getTicketDisplayId(),
                         style: TextStyle(
                           color: isDark
-                              ? Colors.blue[400]
-                              : const Color(0xFF0066FF),
+                              ? Colors.white70
+                              : AppColors.primary,
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
                         ),
@@ -599,10 +601,14 @@ class _TicketCard extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
         decoration: BoxDecoration(
-          color: isDark ? Colors.grey[850] : const Color(0xFFF5F7FA),
+          color: isDark
+              ? AppColors.primary.withOpacity(0.25)
+              : AppColors.primary.withOpacity(0.08),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isDark ? Colors.grey[700]! : const Color(0xFFE1E7F0),
+            color: isDark
+                ? AppColors.primary.withOpacity(0.5)
+                : AppColors.primary.withOpacity(0.2),
           ),
         ),
         child: Row(
@@ -611,7 +617,7 @@ class _TicketCard extends StatelessWidget {
             Icon(
               icon,
               size: 16,
-              color: isDark ? Colors.blue[200] : const Color(0xFF2563EB),
+              color: isDark ? Colors.white70 : AppColors.primary,
             ),
             const SizedBox(width: 8),
             Flexible(
@@ -620,7 +626,7 @@ class _TicketCard extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: isDark ? Colors.white : Colors.black87,
+                  color: isDark ? Colors.white : AppColors.primary,
                   fontWeight: FontWeight.w700,
                   fontSize: 13,
                 ),
@@ -659,11 +665,11 @@ class _TicketCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: isCompleted
-                      ? const Color(0xFF0066FF)
+                      ? AppColors.primary
                       : (isDark ? Colors.grey[800] : Colors.white),
                   border: Border.all(
                     color: isCompleted
-                        ? const Color(0xFF0066FF)
+                        ? AppColors.primary
                         : (isDark ? Colors.grey[600]! : Colors.grey[300]!),
                     width: 2,
                   ),
@@ -685,7 +691,7 @@ class _TicketCard extends StatelessWidget {
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                     color: isCompleted
-                        ? const Color(0xFF0066FF)
+                        ? AppColors.primary
                         : (isDark ? Colors.grey[400] : Colors.grey[500]),
                   ),
                 ),
@@ -704,7 +710,7 @@ class _TicketCard extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 20), // align with circles
               height: 2,
               color: isLineCompleted
-                  ? const Color(0xFF0066FF)
+                  ? AppColors.primary
                   : (isDark ? Colors.grey[700] : Colors.grey[200]),
             ),
           ),

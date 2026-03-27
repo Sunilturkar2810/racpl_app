@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:racpl/theme/app_colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/expense_model.dart';
 
 class ExpenseDetailsDialog extends StatelessWidget {
   final Expense expense;
 
-  const ExpenseDetailsDialog({Key? key, required this.expense})
-    : super(key: key);
+  const ExpenseDetailsDialog({super.key, required this.expense});
 
   @override
   Widget build(BuildContext context) {
@@ -24,47 +24,53 @@ class ExpenseDetailsDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Expense Details',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Expense Details',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '#${expense.id} • ${expense.category.toUpperCase()}',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.blueGrey.shade400,
+                        const SizedBox(height: 4),
+                        Text(
+                          '#${expense.id} • ${expense.category.toUpperCase()}',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white70,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.close),
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
-                  splashRadius: 24,
-                ),
-              ],
+                  IconButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: const Icon(Icons.close, color: Colors.white),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    splashRadius: 24,
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 16),
             const Divider(height: 1),
             const SizedBox(height: 16),
-
-            // Info Grid
             Row(
               children: [
                 Expanded(child: _buildInfoItem('EMPLOYEE', expense.userName)),
@@ -91,8 +97,6 @@ class ExpenseDetailsDialog extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 24),
-
-            // Description Box
             _buildSection(
               title: 'Description / Notes',
               content: expense.description.isNotEmpty
@@ -100,8 +104,6 @@ class ExpenseDetailsDialog extends StatelessWidget {
                   : 'No description provided.',
             ),
             const SizedBox(height: 16),
-
-            // Bill Attachment Box
             _buildSection(
               title: 'Bill Attachment',
               contentWidget: Row(
@@ -110,7 +112,7 @@ class ExpenseDetailsDialog extends StatelessWidget {
                       expense.receiptUrl!.isNotEmpty) ...[
                     const Icon(
                       Icons.receipt_long,
-                      color: Colors.blue,
+                      color: AppColors.primary,
                       size: 20,
                     ),
                     const SizedBox(width: 8),
@@ -129,7 +131,7 @@ class ExpenseDetailsDialog extends StatelessWidget {
                       child: const Text(
                         'View Uploaded Bill',
                         style: TextStyle(
-                          color: Colors.blue,
+                          color: AppColors.primary,
                           fontWeight: FontWeight.w600,
                           decoration: TextDecoration.underline,
                         ),
@@ -145,15 +147,13 @@ class ExpenseDetailsDialog extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-
-            // Close Button
             SizedBox(
               width: double.infinity,
               height: 44,
               child: ElevatedButton(
                 onPressed: () => Navigator.of(context).pop(),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue.shade600,
+                  backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -180,7 +180,7 @@ class ExpenseDetailsDialog extends StatelessWidget {
           style: TextStyle(
             fontSize: 10,
             fontWeight: FontWeight.bold,
-            color: Colors.blueGrey.shade400,
+            color: AppColors.primary.withOpacity(0.7),
           ),
         ),
         const SizedBox(height: 4),
@@ -213,7 +213,7 @@ class ExpenseDetailsDialog extends StatelessWidget {
             style: const TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.bold,
-              color: Colors.blue,
+              color: AppColors.primary,
             ),
           ),
           const SizedBox(height: 8),

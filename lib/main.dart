@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:racpl/theme/app_theme.dart';
+
 import 'package:provider/provider.dart';
 import 'package:racpl/providers/auth_provider.dart';
 import 'package:racpl/services/auth_service.dart';
@@ -27,6 +29,8 @@ import 'package:racpl/providers/help_ticket_config_provider.dart';
 import 'package:racpl/services/dashboard_service.dart';
 import 'package:racpl/services/help_ticket_config_service.dart';
 import 'screens/auth/login_screen.dart';
+import 'screens/home/home_screen.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -159,59 +163,73 @@ class MyApp extends StatelessWidget {
 
           return MaterialApp(
             title: 'RACPL ERP',
-            theme: ThemeData(
-              useMaterial3: true,
-              scaffoldBackgroundColor: const Color(
-                0xFFF3F4F6,
-              ), // Light grey background
-              colorScheme: ColorScheme.fromSeed(
-                seedColor: const Color(0xFF137FEC), // Primary Blue
-                primary: const Color(0xFF137FEC),
-                secondary: const Color(0xFF10B981), // Emerald Green
-                surface: Colors.white,
-                brightness: Brightness.light,
-              ),
-              appBarTheme: const AppBarTheme(
-                backgroundColor: Color(0xFF137FEC),
-                foregroundColor: Colors.white,
-                elevation: 0,
-                centerTitle: true,
-                iconTheme: IconThemeData(color: Colors.white),
-                titleTextStyle: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              cardTheme: CardThemeData(
-                color: Colors.white,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
-            darkTheme: ThemeData(
-              useMaterial3: true,
-              scaffoldBackgroundColor: const Color(0xFF121212),
-              colorScheme: ColorScheme.fromSeed(
-                seedColor: const Color(0xFF137FEC),
-                primary: const Color(0xFF137FEC),
-                brightness: Brightness.dark,
-              ),
-              appBarTheme: const AppBarTheme(
-                backgroundColor: Color(0xFF1E1E1E),
-                foregroundColor: Colors.white,
-                elevation: 0,
-                centerTitle: true,
-              ),
-            ),
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
             themeMode: themeMode,
             debugShowCheckedModeBanner: false,
-            home: const LoginScreen(),
+            home: const _AuthWrapper(),
           );
         },
       ),
     );
+  }
+}
+
+/// Handles auto-login on app start by calling initializeAuth()
+class _AuthWrapper extends StatefulWidget {
+  const _AuthWrapper();
+
+  @override
+  State<_AuthWrapper> createState() => _AuthWrapperState();
+}
+
+class _AuthWrapperState extends State<_AuthWrapper> {
+  bool _initialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _init();
+  }
+
+  Future<void> _init() async {
+    // initializeAuth reads the stored token and validates it
+    await context.read<AuthProvider>().initializeAuth();
+    if (mounted) {
+      setState(() => _initialized = true);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_initialized) {
+      // Show a branded splash while checking auth
+      return const Scaffold(
+        backgroundColor: Color(0xFF003366),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.business_center, color: Colors.white, size: 64),
+              SizedBox(height: 16),
+              Text(
+                'RACPL ERP',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 2,
+                ),
+              ),
+              SizedBox(height: 32),
+              CircularProgressIndicator(color: Colors.white),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final isAuthenticated = context.watch<AuthProvider>().isAuthenticated;
+    return isAuthenticated ? const HomeScreen() : const LoginScreen();
   }
 }

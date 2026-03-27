@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:racpl/theme/app_colors.dart';
 import '../../../models/mom_model.dart';
 import '../../../providers/mom_provider.dart';
 
@@ -64,7 +65,7 @@ class _CreateMomScreenState extends State<CreateMomScreen> {
       labelText: label,
       filled: true,
       fillColor: Colors.grey.withAlpha(20),
-      suffixIcon: icon != null ? Icon(icon, color: Colors.blue) : null,
+      suffixIcon: icon != null ? Icon(icon, color: AppColors.primary) : null,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide.none,
@@ -75,7 +76,7 @@ class _CreateMomScreenState extends State<CreateMomScreen> {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Colors.blue, width: 2),
+        borderSide: const BorderSide(color: AppColors.primary, width: 2),
       ),
     );
   }
@@ -204,7 +205,10 @@ class _CreateMomScreenState extends State<CreateMomScreen> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancel'),
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(color: AppColors.primary),
+                  ),
                 ),
                 TextButton(
                   onPressed: () {
@@ -223,7 +227,10 @@ class _CreateMomScreenState extends State<CreateMomScreen> {
                     }
                     Navigator.pop(context);
                   },
-                  child: const Text('Add'),
+                  child: const Text(
+                    'Add',
+                    style: TextStyle(color: AppColors.primary),
+                  ),
                 ),
               ],
             );
@@ -254,7 +261,7 @@ class _CreateMomScreenState extends State<CreateMomScreen> {
               return Theme(
                 data: Theme.of(context).copyWith(
                   colorScheme: const ColorScheme.light(
-                    primary: Colors.blue,
+                    primary: AppColors.primary,
                     onPrimary: Colors.white,
                     onSurface: Colors.black,
                   ),
@@ -392,7 +399,10 @@ class _CreateMomScreenState extends State<CreateMomScreen> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancel'),
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(color: AppColors.primary),
+                  ),
                 ),
                 TextButton(
                   onPressed: () {
@@ -414,7 +424,10 @@ class _CreateMomScreenState extends State<CreateMomScreen> {
                     }
                     Navigator.pop(context);
                   },
-                  child: const Text('Add'),
+                  child: const Text(
+                    'Add',
+                    style: TextStyle(color: AppColors.primary),
+                  ),
                 ),
               ],
             );
@@ -502,6 +515,9 @@ class _CreateMomScreenState extends State<CreateMomScreen> {
       appBar: AppBar(
         title: Text(widget.momToEdit != null ? 'Edit MOM' : 'Create MOM'),
         centerTitle: true,
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Consumer<MomProvider>(
         builder: (context, provider, child) {
@@ -540,7 +556,7 @@ class _CreateMomScreenState extends State<CreateMomScreen> {
                           onPressed: provider.isLoading ? null : _saveMom,
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
-                            backgroundColor: Colors.blue,
+                            backgroundColor: AppColors.primary,
                             foregroundColor: Colors.white,
                           ),
                           child: provider.isLoading
@@ -745,8 +761,15 @@ class _CreateMomScreenState extends State<CreateMomScreen> {
             Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
             TextButton.icon(
               onPressed: () => _addAttendee(title, list),
-              icon: const Icon(Icons.add, size: 16),
-              label: const Text('Add'),
+              icon: const Icon(
+                Icons.add,
+                size: 16,
+                color: AppColors.primary,
+              ),
+              label: const Text(
+                'Add',
+                style: TextStyle(color: AppColors.primary),
+              ),
             ),
           ],
         ),
@@ -853,7 +876,7 @@ class _CreateMomScreenState extends State<CreateMomScreen> {
                               'Delayed Days: ${minute.delayedDays}',
                               style: const TextStyle(
                                 fontSize: 13,
-                                color: Colors.orange,
+                                color: AppColors.primary,
                               ),
                             ),
                           if (minute.remarks.isNotEmpty)
@@ -869,8 +892,15 @@ class _CreateMomScreenState extends State<CreateMomScreen> {
               ),
             OutlinedButton.icon(
               onPressed: _addMinute,
-              icon: const Icon(Icons.add),
-              label: const Text('Add Discussion Point'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppColors.primary,
+                side: const BorderSide(color: AppColors.primary),
+              ),
+              icon: const Icon(Icons.add, color: AppColors.primary),
+              label: const Text(
+                'Add Discussion Point',
+                style: TextStyle(color: AppColors.primary),
+              ),
             ),
           ],
         ),

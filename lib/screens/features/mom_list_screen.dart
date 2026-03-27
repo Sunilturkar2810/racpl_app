@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:racpl/theme/app_colors.dart';
 import '../../providers/mom_provider.dart';
 import '../../models/mom_model.dart';
 import 'mom/create_mom_screen.dart';
@@ -31,6 +32,9 @@ class _MomListScreenState extends State<MomListScreen> {
         title: const Text('MOM Management'),
         centerTitle: true,
         elevation: 0,
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
@@ -42,7 +46,7 @@ class _MomListScreenState extends State<MomListScreen> {
             context.read<MomProvider>().fetchMeetings();
           }
         },
-        backgroundColor: Colors.blue,
+        backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         icon: const Icon(Icons.add),
         label: const Text(
@@ -65,6 +69,10 @@ class _MomListScreenState extends State<MomListScreen> {
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () => provider.fetchMeetings(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                    ),
                     child: const Text('Retry'),
                   ),
                 ],
@@ -151,13 +159,13 @@ class _MomListScreenState extends State<MomListScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: Colors.blue.withOpacity(0.1),
+                color: AppColors.primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
                 '${mom.minutes.length} Points',
                 style: const TextStyle(
-                  color: Colors.blue,
+                  color: AppColors.primary,
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),
@@ -183,13 +191,13 @@ class _MomListScreenState extends State<MomListScreen> {
                       const Icon(
                         Icons.remove_red_eye,
                         size: 16,
-                        color: Colors.blue,
+                        color: AppColors.primary,
                       ),
                       const SizedBox(width: 4),
                       Text(
                         'View',
                         style: TextStyle(
-                          color: Colors.blue[600],
+                          color: AppColors.primary,
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                         ),
@@ -212,12 +220,16 @@ class _MomListScreenState extends State<MomListScreen> {
                   },
                   child: Row(
                     children: [
-                      const Icon(Icons.edit, size: 16, color: Colors.orange),
+                      const Icon(
+                        Icons.edit,
+                        size: 16,
+                        color: AppColors.primary,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         'Edit',
                         style: TextStyle(
-                          color: Colors.orange[600],
+                          color: AppColors.primary,
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                         ),

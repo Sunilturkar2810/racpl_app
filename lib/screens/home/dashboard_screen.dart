@@ -11,6 +11,8 @@ import 'components/stat_card.dart';
 import 'components/attendance_chart.dart';
 import 'components/quick_actions.dart';
 import 'components/recent_activity.dart';
+import '../../theme/app_colors.dart';
+
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -123,47 +125,62 @@ class _DashboardScreenState extends State<DashboardScreen> {
         }
 
         final stats = dashboardProvider.stats;
+        final cardWidth = MediaQuery.of(context).size.width * 0.45;
 
-        return GridView.count(
-          crossAxisCount: MediaQuery.of(context).size.width > 900 ? 4 : 2,
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          children: [
-            StatCard(
-              title: 'Total Employees',
-              value: stats.totalEmployees.toString(),
-              icon: Icons.groups,
-              trend: '+2%',
-              trendLabel: 'vs last month',
-              color: Colors.blue,
-            ),
-            StatCard(
-              title: 'Present Today',
-              value: stats.presentToday.toString(),
-              icon: Icons.how_to_reg,
-              trend: '92%',
-              trendLabel: 'Attendance rate',
-              color: Colors.green,
-            ),
-            StatCard(
-              title: 'Pending Tasks',
-              value: stats.pendingTasks.toString(),
-              icon: Icons.pending_actions,
-              trend: 'Urgent',
-              trendLabel: 'To-do items',
-              color: Colors.orange,
-            ),
-            StatCard(
-              title: 'Open Tickets',
-              value: stats.openTickets.toString(),
-              icon: Icons.confirmation_number,
-              trend: 'Low',
-              trendLabel: 'Support tickets',
-              color: Colors.purple,
-            ),
-          ],
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          physics: const BouncingScrollPhysics(),
+          child: Row(
+            children: [
+              SizedBox(
+                width: cardWidth,
+                child: StatCard(
+                  title: 'Total Employees',
+                  value: stats.totalEmployees.toString(),
+                  icon: Icons.groups,
+                  trend: '+2%',
+                  trendLabel: 'vs last month',
+                  color: Colors.blue,
+                ),
+              ),
+              const SizedBox(width: 8),
+              SizedBox(
+                width: cardWidth,
+                child: StatCard(
+                  title: 'Present Today',
+                  value: stats.presentToday.toString(),
+                  icon: Icons.how_to_reg,
+                  trend: '92%',
+                  trendLabel: 'Attendance rate',
+                  color: Colors.green,
+                ),
+              ),
+              const SizedBox(width: 8),
+              SizedBox(
+                width: cardWidth,
+                child: StatCard(
+                  title: 'Pending Tasks',
+                  value: stats.pendingTasks.toString(),
+                  icon: Icons.pending_actions,
+                  trend: 'Urgent',
+                  trendLabel: 'To-do items',
+                  color: Colors.orange,
+                ),
+              ),
+              const SizedBox(width: 8),
+              SizedBox(
+                width: cardWidth,
+                child: StatCard(
+                  title: 'Open Tickets',
+                  value: stats.openTickets.toString(),
+                  icon: Icons.confirmation_number,
+                  trend: 'Low',
+                  trendLabel: 'Support tickets',
+                  color: Colors.purple,
+                ),
+              ),
+            ],
+          ),
         );
       },
     );
@@ -358,12 +375,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                 : (index == 2
                                                       ? 'IMS'
                                                       : 'TODO')),
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontSize: 10,
-                                        color: Colors.blue[600],
+                                        color: AppColors.primary,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
+
                                   ],
                                 ),
                               ],
@@ -444,9 +462,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
         QuickAction(
           label: 'New Task',
           icon: Icons.add_task,
-          color: Colors.blue[600]!,
+          color: AppColors.primary,
           onTap: () => developer.log('New Task clicked'),
         ),
+
         QuickAction(
           label: 'Apply Leave',
           icon: Icons.event_available,

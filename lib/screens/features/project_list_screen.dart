@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:racpl/theme/app_colors.dart';
 import 'package:provider/provider.dart';
+
 import '../../providers/project_provider.dart';
 import '../../models/project_model.dart';
 import '../../widgets/create_project_dialog.dart';
@@ -32,10 +34,11 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
           'Project Management',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: const Color(0xFF137FEC),
+        backgroundColor: AppColors.primary,
         centerTitle: true,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
+
       ),
       body: Consumer<ProjectProvider>(
         builder: (context, provider, _) {
@@ -105,12 +108,13 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(color: Colors.grey.shade200),
       ),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
+      child: SizedBox(
+        height: 74,
+        child: ListView(
+          scrollDirection: Axis.horizontal,
           children: [
             _buildCustomDropdown(
               label: 'PROJECT NAME',
@@ -126,31 +130,35 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
               label: 'CURRENT STATUS',
               value: _selectedStatusFilter,
               icon: Icons.circle,
-              iconColor: Colors.blue,
+              iconColor: AppColors.primary,
               items: statusLevels,
               onChanged: (val) {
                 setState(() => _selectedStatusFilter = val);
               },
             ),
-            const SizedBox(width: 24),
-            ElevatedButton.icon(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (_) => const CreateProjectDialog(),
-                );
-              },
-              icon: const Icon(Icons.add, size: 18),
-              label: const Text('New Project'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue.shade600,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+            const SizedBox(width: 16),
+            SizedBox(
+              width: 150,
+              height: 48,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (_) => const CreateProjectDialog(),
+                  );
+                },
+                icon: const Icon(Icons.add, size: 18),
+                label: const Text('New Project'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -165,7 +173,9 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
     required List<String> items,
     required ValueChanged<String> onChanged,
   }) {
-    return Column(
+    return SizedBox(
+      width: 180,
+      child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -177,61 +187,145 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
           ),
         ),
         const SizedBox(height: 4),
-        PopupMenuButton<String>(
-          position: PopupMenuPosition.under,
-          offset: const Offset(0, 4),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(4),
-            side: BorderSide(color: Colors.grey.shade300),
-          ),
+        Material(
           color: Colors.white,
-          elevation: 2,
-          padding: EdgeInsets.zero,
-          onSelected: onChanged,
-          itemBuilder: (context) {
-            return items.map((item) {
-              final isSelected = item == value;
-              return PopupMenuItem<String>(
-                value: item,
-                padding: EdgeInsets.zero,
-                height: 40,
-                child: Container(
-                  width: double.infinity,
-                  color: isSelected ? Colors.blue.shade600 : Colors.transparent,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  child: Text(
-                    item,
-                    style: TextStyle(
-                      color: isSelected ? Colors.white : Colors.black87,
-                      fontSize: 13,
+          borderRadius: BorderRadius.circular(14),
+          child: InkWell(
+            onTap: () => _showSelectionSheet(
+              title: label,
+              items: items,
+              selectedValue: value,
+              onSelected: onChanged,
+            ),
+            borderRadius: BorderRadius.circular(14),
+            child: Container(
+              width: 180,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: AppColors.primary.withOpacity(0.5)),
+              ),
+              child: Row(
+                children: [
+                  Icon(icon, size: 14, color: iconColor ?? AppColors.primary),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      value,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
+                        color: Colors.black87,
+                      ),
                     ),
                   ),
-                ),
-              );
-            }).toList();
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.blue.shade400),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(icon, size: 14, color: iconColor ?? Colors.blue),
-                const SizedBox(width: 8),
-                Text(
-                  value,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.black87),
-                ),
-              ],
+                  Icon(Icons.keyboard_arrow_down, color: Colors.grey.shade600),
+                ],
+              ),
             ),
           ),
         ),
       ],
+      ),
     );
+  }
+
+  Future<void> _showSelectionSheet({
+    required String title,
+    required List<String> items,
+    required String selectedValue,
+    required ValueChanged<String> onSelected,
+  }) async {
+    final selected = await showModalBottomSheet<String>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                decoration: const BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Material(
+                      color: Colors.white24,
+                      shape: const CircleBorder(),
+                      child: InkWell(
+                        onTap: () => Navigator.pop(sheetContext),
+                        customBorder: const CircleBorder(),
+                        child: const Padding(
+                          padding: EdgeInsets.all(6),
+                          child: Icon(
+                            Icons.close,
+                            size: 20,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Flexible(
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  itemCount: items.length,
+                  separatorBuilder: (_, __) => Divider(
+                    height: 1,
+                    color: Colors.grey.shade200,
+                  ),
+                  itemBuilder: (sheetContext, index) {
+                    final item = items[index];
+                    final isSelected = item == selectedValue;
+                    return ListTile(
+                      title: Text(
+                        item,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.w500,
+                          color: isSelected
+                              ? AppColors.primary
+                              : Colors.black87,
+                        ),
+                      ),
+                      trailing: isSelected
+                          ? const Icon(Icons.check, color: AppColors.primary)
+                          : null,
+                      onTap: () => Navigator.pop(sheetContext, item),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+
+    if (selected != null) {
+      onSelected(selected);
+    }
   }
 
   Widget _buildInfoRow(String title, String value) {
@@ -297,7 +391,8 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
-                              color: Colors.blue.shade600,
+                              color: AppColors.primary,
+
                             ),
                           ),
                           const SizedBox(width: 8),
@@ -364,7 +459,8 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                _buildActionIcon(Icons.remove_red_eye_outlined, Colors.indigo.shade400, () {
+                _buildActionIcon(Icons.remove_red_eye_outlined, AppColors.primary, () {
+
                   showDialog(
                     context: context,
                     builder: (_) => ProjectDetailsDialog(project: project),
@@ -410,9 +506,10 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
         textColor = Colors.green.shade700;
         break;
       case 'AWARD TO START':
-        bgColor = Colors.blue.shade50;
-        textColor = Colors.blue.shade700;
+        bgColor = AppColors.primary.withOpacity(0.1);
+        textColor = AppColors.primary;
         break;
+
       case 'HOLD':
         bgColor = Colors.orange.shade50;
         textColor = Colors.orange.shade700;

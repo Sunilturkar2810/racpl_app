@@ -4,10 +4,12 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:intl/intl.dart';
 import 'package:universal_html/html.dart' as html;
+import 'package:open_filex/open_filex.dart';
+import 'package:racpl/theme/app_colors.dart';
 import '../../providers/vendor_provider.dart';
+
 import '../../models/vendor_model.dart';
 import '../../widgets/vendor_details_dialog.dart';
 import '../../widgets/submit_vendor_dialog.dart';
@@ -33,10 +35,13 @@ class _VendorListScreenState extends State<VendorListScreen> {
       appBar: AppBar(
         title: const Text(
           'Vendor Management',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white),
         ),
+        backgroundColor: AppColors.primary,
+        iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,
       ),
+
       body: Consumer<VendorProvider>(
         builder: (context, provider, _) {
           return Column(
@@ -111,16 +116,28 @@ class _VendorListScreenState extends State<VendorListScreen> {
           ..click();
         html.Url.revokeObjectUrl(url);
       } else {
-        final directory = await getApplicationDocumentsDirectory();
+        final directory =
+            Platform.isAndroid
+                ? await getExternalStorageDirectory() ??
+                    await getApplicationDocumentsDirectory()
+                : await getApplicationDocumentsDirectory();
         final path = '${directory.path}/$fileName';
         final file = File(path);
         await file.writeAsString(csv);
 
-        // Trigger native share/download dialog on mobile
-        await Share.shareXFiles(
-          [XFile(path)],
-          text: 'Exported Vendors CSV',
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('CSV saved to device'),
+              action: SnackBarAction(
+                label: 'Open',
+                onPressed: () {
+                  _openExportedFile(path);
+                },
+              ),
+            ),
+          );
+        }
       }
 
     } catch (e) {
@@ -143,100 +160,148 @@ class _VendorListScreenState extends State<VendorListScreen> {
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.symmetric(vertical: 12.0),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: 140,
-              child: _buildDropdown(
-                'All Companies',
-                provider.selectedCompany,
-                provider.uniqueCompanies,
-                (val) => provider.setFilters(
-                  company: val,
-                  category: provider.selectedCategory,
-                  project: provider.selectedProject,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            height: 56,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              children: [
+                _buildDropdown(
+                  'All Companies',
+                  provider.selectedCompany,
+                  provider.uniqueCompanies,
+                  (val) => provider.setFilters(
+                    company: val,
+                    category: provider.selectedCategory,
+                    project: provider.selectedProject,
+                  ),
                 ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            SizedBox(
-              width: 140,
-              child: _buildDropdown(
-                'All Categories',
-                provider.selectedCategory,
-                provider.uniqueCategories,
-                (val) => provider.setFilters(
-                  company: provider.selectedCompany,
-                  category: val,
-                  project: provider.selectedProject,
+                const SizedBox(width: 8),
+                _buildDropdown(
+                  'All Categories',
+                  provider.selectedCategory,
+                  provider.uniqueCategories,
+                  (val) => provider.setFilters(
+                    company: provider.selectedCompany,
+                    category: val,
+                    project: provider.selectedProject,
+                  ),
                 ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            SizedBox(
-              width: 140,
-              child: _buildDropdown(
-                'All Projects',
-                provider.selectedProject,
-                provider.uniqueProjects,
-                (val) => provider.setFilters(
-                  company: provider.selectedCompany,
-                  category: provider.selectedCategory,
-                  project: val,
+                const SizedBox(width: 8),
+                _buildDropdown(
+                  'All Projects',
+                  provider.selectedProject,
+                  provider.uniqueProjects,
+                  (val) => provider.setFilters(
+                    company: provider.selectedCompany,
+                    category: provider.selectedCategory,
+                    project: val,
+                  ),
                 ),
-              ),
+                const SizedBox(width: 8),
+                SizedBox(
+                  width: 110,
+                  child: OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.redAccent,
+                      side: const BorderSide(color: Colors.redAccent),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    onPressed: () {
+                      provider.resetFilters();
+                    },
+                    icon: const Icon(Icons.clear_all, size: 18),
+                    label: const Text('Reset'),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(width: 12),
-            OutlinedButton.icon(
-              style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.redAccent,
-                side: const BorderSide(color: Colors.redAccent),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              ),
-              onPressed: () {
-                provider.resetFilters();
-              },
-              icon: const Icon(Icons.clear_all, size: 18),
-              label: const Text('Reset'),
+          ),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF10b981),
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    onPressed: () {
+                      _exportCSV(context, provider);
+                    },
+                    icon: const Icon(Icons.download, size: 18),
+                    label: const Text(
+                      'Export CSV',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    onPressed: () {
+                      _showCreateVendorDialog(context);
+                    },
+                    icon: const Icon(Icons.add, size: 18),
+                    label: const Text(
+                      'Create Vendor',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(width: 12),
-            ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF10b981), // green similar to the screenshot
-                foregroundColor: Colors.white,
-                elevation: 0,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              ),
-              onPressed: () {
-                _exportCSV(context, provider);
-              },
-              icon: const Icon(Icons.download, size: 18),
-              label: const Text('Export CSV', style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
-            const SizedBox(width: 12),
-            ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF3b82f6), // blue similar to the screenshot
-                foregroundColor: Colors.white,
-                elevation: 0,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              ),
-              onPressed: () {
-                _showCreateVendorDialog(context);
-              },
-              icon: const Icon(Icons.add, size: 18),
-              label: const Text('Create Vendor', style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 4),
+        ],
       ),
     );
+  }
+
+  Future<void> _openExportedFile(String path) async {
+    final result = await OpenFilex.open(path);
+    final opened = result.type == ResultType.done;
+
+    if (!opened && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            result.message.isNotEmpty ? result.message : 'File saved at: $path',
+          ),
+        ),
+      );
+    }
   }
 
   Widget _buildDropdown(
@@ -245,63 +310,158 @@ class _VendorListScreenState extends State<VendorListScreen> {
     List<String> items,
     Function(String?) onChanged,
   ) {
-    String displayValue = (currentValue == null || currentValue.isEmpty) ? hint : currentValue;
-    return PopupMenuButton<String>(
-      position: PopupMenuPosition.under,
-      color: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 4,
-      onSelected: onChanged,
-      constraints: const BoxConstraints(maxHeight: 300),
-      itemBuilder: (BuildContext context) {
-        final allItems = [null, ...items];
-        return allItems.map((String? item) {
-          return PopupMenuItem<String>(
-            value: item,
-            child: Text(
-              item ?? hint,
-              style: TextStyle(
-                color: item == null ? Colors.grey : const Color(0xFF1E293B),
-                fontSize: 14,
-                fontWeight: item == null ? FontWeight.normal : FontWeight.w500,
+    final displayValue =
+        (currentValue == null || currentValue.isEmpty) ? hint : currentValue;
+    return SizedBox(
+      width: 150,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 2),
+          Material(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14),
+            child: InkWell(
+              onTap: () => _showSelectionSheet(
+                title: hint,
+                items: items,
+                selectedValue: currentValue,
+                onSelected: onChanged,
               ),
-            ),
-          );
-        }).toList();
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.grey.shade50,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: Colors.grey.shade300,
-            width: 1.0,
-          ),
-        ),
-        padding: const EdgeInsets.symmetric(
-          horizontal: 12,
-          vertical: 12,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Text(
-                displayValue,
-                style: TextStyle(
-                  color: (currentValue == null || currentValue.isEmpty)
-                      ? Colors.grey[600]
-                      : const Color(0xFF1E293B),
-                  fontSize: 13,
+              borderRadius: BorderRadius.circular(14),
+              child: Container(
+                width: 150,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 12,
                 ),
-                overflow: TextOverflow.ellipsis,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade50,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: Colors.grey.shade300,
+                    width: 1.0,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        displayValue,
+                        style: TextStyle(
+                          color: (currentValue == null || currentValue.isEmpty)
+                              ? Colors.grey[600]
+                              : const Color(0xFF1E293B),
+                          fontSize: 13,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Icon(Icons.keyboard_arrow_down, color: Colors.grey[600]),
+                  ],
+                ),
               ),
             ),
-            Icon(Icons.arrow_drop_down, color: Colors.grey[600]),
-          ],
-        ),
+          ),
+        ],
       ),
     );
+  }
+
+  Future<void> _showSelectionSheet({
+    required String title,
+    required List<String> items,
+    required String? selectedValue,
+    required Function(String?) onSelected,
+  }) async {
+    final selected = await showModalBottomSheet<String?>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) {
+        final sheetItems = <String?>[null, ...items];
+
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                decoration: const BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Material(
+                      color: Colors.white24,
+                      shape: const CircleBorder(),
+                      child: InkWell(
+                        onTap: () => Navigator.pop(sheetContext),
+                        customBorder: const CircleBorder(),
+                        child: const Padding(
+                          padding: EdgeInsets.all(6),
+                          child: Icon(
+                            Icons.close,
+                            size: 20,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Flexible(
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  itemCount: sheetItems.length,
+                  separatorBuilder: (_, __) =>
+                      Divider(height: 1, color: Colors.grey.shade200),
+                  itemBuilder: (sheetContext, index) {
+                    final item = sheetItems[index];
+                    final isSelected = item == selectedValue ||
+                        (item == null &&
+                            (selectedValue == null || selectedValue.isEmpty));
+                    return ListTile(
+                      title: Text(
+                        item ?? title,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontWeight:
+                              isSelected ? FontWeight.bold : FontWeight.w500,
+                          color: isSelected
+                              ? AppColors.primary
+                              : Colors.black87,
+                        ),
+                      ),
+                      trailing: isSelected
+                          ? const Icon(Icons.check, color: AppColors.primary)
+                          : null,
+                      onTap: () => Navigator.pop(sheetContext, item),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+
+    onSelected(selected);
   }
 
   Widget _buildList(VendorProvider provider) {

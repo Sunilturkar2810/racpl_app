@@ -121,13 +121,16 @@ class VendorProvider extends ChangeNotifier {
 
   void _setLoading(bool value) {
     _isLoading = value;
+    notifyListeners();
   }
 
   void _setError(dynamic error) {
-    _error = error is AppError ? error : AppError.fromDioException(error);      
+    _error = error is AppError ? error : AppError.fromDioException(error);
+    notifyListeners();
   }
 
   void _clearError() {
     _error = null;
+    notifyListeners();
   }
 }

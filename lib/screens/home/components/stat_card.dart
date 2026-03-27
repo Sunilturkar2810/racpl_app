@@ -25,68 +25,70 @@ class StatCard extends StatelessWidget {
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      color: isDark ? Colors.grey[900] : Colors.white,
+      color: isDark 
+          ? color.withOpacity(0.12) 
+          : color.withOpacity(0.08),
+      shadowColor: color.withOpacity(0.2),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(12.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            // Header: Title + Icon
+            // Top Row: Icon + Value
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[600],
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        value,
-                        style: Theme.of(context).textTheme.headlineSmall
-                            ?.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                ),
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(12),
+                    color: color.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(icon, color: color, size: 28),
+                  child: Icon(icon, color: color, size: 24),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    value,
+                    style: Theme.of(context).textTheme.titleLarge
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ],
             ),
             const SizedBox(height: 12),
-            // Trend Badge
+            // Title below the top row
+            Text(
+              title,
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w600,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 12),
+            // Trend Badge at the bottom
             Row(
               children: [
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
+                    horizontal: 8,
+                    vertical: 4,
                   ),
                   decoration: BoxDecoration(
                     color: trend.startsWith('+')
-                        ? Colors.green.withOpacity(0.2)
+                        ? Colors.green.withOpacity(0.12)
                         : trend.startsWith('-')
-                        ? Colors.red.withOpacity(0.2)
-                        : Colors.amber.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(8),
+                        ? Colors.red.withOpacity(0.12)
+                        : Colors.amber.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
                     trend,
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 11,
                       fontWeight: FontWeight.bold,
                       color: trend.startsWith('+')
                           ? Colors.green
@@ -101,7 +103,7 @@ class StatCard extends StatelessWidget {
                   child: Text(
                     trendLabel,
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 11,
                       color: Colors.grey[500],
                       fontWeight: FontWeight.w500,
                     ),

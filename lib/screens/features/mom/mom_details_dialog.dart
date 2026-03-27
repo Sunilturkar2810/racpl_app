@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../models/mom_model.dart';
 import 'package:intl/intl.dart';
+import 'package:racpl/theme/app_colors.dart';
+import '../../../models/mom_model.dart';
 
 class MomDetailsDialog extends StatelessWidget {
   final Mom mom;
@@ -13,7 +14,6 @@ class MomDetailsDialog extends StatelessWidget {
     final textColor = isDark ? Colors.white : Colors.black87;
     final labelColor = isDark ? Colors.grey[400] : Colors.grey[600];
 
-    // Format createdAt
     String formattedCreated = mom.createdAt;
     try {
       if (mom.createdAt.isNotEmpty) {
@@ -32,13 +32,16 @@ class MomDetailsDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Header
-            Padding(
+            Container(
               padding: const EdgeInsets.only(
                 left: 20,
                 right: 12,
                 top: 16,
                 bottom: 12,
+              ),
+              decoration: const BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,21 +50,21 @@ class MomDetailsDialog extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           'MOM Details',
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: textColor,
+                            color: Colors.white,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          '${mom.momId} • ${mom.project}',
-                          style: TextStyle(
+                          '${mom.momId} - ${mom.project}',
+                          style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
-                            color: labelColor,
+                            color: Colors.white70,
                           ),
                         ),
                       ],
@@ -69,7 +72,7 @@ class MomDetailsDialog extends StatelessWidget {
                   ),
                   IconButton(
                     icon: const Icon(Icons.close),
-                    color: labelColor,
+                    color: Colors.white,
                     onPressed: () => Navigator.pop(context),
                     splashRadius: 20,
                   ),
@@ -81,15 +84,12 @@ class MomDetailsDialog extends StatelessWidget {
               thickness: 1,
               color: isDark ? Colors.grey[800] : Colors.grey[200],
             ),
-
-            // Scrollable Content
             Flexible(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Grid Info
                     Row(
                       children: [
                         Expanded(
@@ -134,10 +134,7 @@ class MomDetailsDialog extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 24),
-
-                    // Attendees Card
                     _buildSectionContainer(
-                      context,
                       title: 'Attendees',
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -170,10 +167,7 @@ class MomDetailsDialog extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
-
-                    // Minutes Focus Card
                     _buildSectionContainer(
-                      context,
                       title: 'Minutes Discussed',
                       child: mom.minutes.isEmpty
                           ? Text(
@@ -194,8 +188,6 @@ class MomDetailsDialog extends StatelessWidget {
                             ),
                     ),
                     const SizedBox(height: 16),
-
-                    // Created At
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(16),
@@ -230,8 +222,6 @@ class MomDetailsDialog extends StatelessWidget {
                 ),
               ),
             ),
-
-            // Bottom Action
             Padding(
               padding: const EdgeInsets.all(16),
               child: SizedBox(
@@ -239,7 +229,7 @@ class MomDetailsDialog extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
+                    backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -323,8 +313,7 @@ class MomDetailsDialog extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionContainer(
-    BuildContext context, {
+  Widget _buildSectionContainer({
     required String title,
     required Widget child,
   }) {
@@ -343,7 +332,7 @@ class MomDetailsDialog extends StatelessWidget {
             style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
-              color: Colors.blue,
+              color: AppColors.primary,
             ),
           ),
           const SizedBox(height: 12),
@@ -365,7 +354,7 @@ class MomDetailsDialog extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '•  ',
+              '-  ',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -396,7 +385,7 @@ class MomDetailsDialog extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(top: 2),
                   child: Text(
-                    'Planned: ${minute.plannedCompletion} ${minute.actualCompletion.isNotEmpty ? '→ Actual: ${minute.actualCompletion}' : ''}',
+                    'Planned: ${minute.plannedCompletion}${minute.actualCompletion.isNotEmpty ? ' -> Actual: ${minute.actualCompletion}' : ''}',
                     style: TextStyle(fontSize: 12, color: labelColor),
                   ),
                 ),
