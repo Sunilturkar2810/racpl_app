@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:racpl/theme/app_colors.dart';
 
 import '../features/checklist_list_screen.dart';
 import '../features/delegation_list_screen.dart';
@@ -191,8 +192,18 @@ class _HomeScreenState extends State<HomeScreen> {
             }
           },
           type: BottomNavigationBarType.fixed,
-          selectedItemColor: Theme.of(context).primaryColor,
-          unselectedItemColor: Colors.grey,
+          backgroundColor: AppColors.primary,
+          selectedItemColor: Colors.white,
+          unselectedItemColor: Colors.white70,
+          selectedLabelStyle: const TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 12,
+          ),
+          unselectedLabelStyle: const TextStyle(
+            fontWeight: FontWeight.w500,
+            fontSize: 12,
+          ),
+          elevation: 12,
           items: [
             BottomNavigationBarItem(icon: Icon(_icons[0]), label: _labels[0]),
             BottomNavigationBarItem(icon: Icon(_icons[1]), label: _labels[1]),
