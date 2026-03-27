@@ -173,8 +173,11 @@ class ProjectService {
       factoryActConsultant: value('factory_act_consultant'),
       firefightingApproval: value('firefighting_approval'),
       fireNoc: value('fire_noc'),
+      fireNocRemark: value('fire_noc_remark'),
       labourCess: value('labour_cess'),
+      labourCessRemark: value('labour_cess_remark'),
       solarHaredanOc: value('solar_haredan_oc'),
+      solarHaredanOcRemark: value('solar_haredan_oc_remark'),
       awardLetter: fileValue('award_letter') ?? value('award_letter'),
       awardLetterRemark: value('award_letter_remark'),
       landPaperZoning:

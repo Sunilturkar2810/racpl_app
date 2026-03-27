@@ -93,21 +93,19 @@ class ProjectProvider extends ChangeNotifier {
     try {
       final index = _projects.indexWhere((p) => p.id == id);
       final existingProject = index != -1 ? _projects[index] : null;
-      final updated = await _projectService.updateProject(
+      await _projectService.updateProject(
         id,
         data,
         existingProject: existingProject,
         filePaths: filePaths,
       );
-      if (index != -1) {
-        _projects[index] = updated;
-      }
-      if (_selectedProject?.id == id) {
-        _selectedProject = updated;
-      }
+      // Re-fetch fresh data from backend after successful update
+      _projects = await _projectService.getProjects();
+      _selectedProject = null;
       notifyListeners();
     } catch (e) {
       _setError(e);
+      rethrow; // Re-throw so dialog can show correct error feedback
     } finally {
       _setLoading(false);
     }

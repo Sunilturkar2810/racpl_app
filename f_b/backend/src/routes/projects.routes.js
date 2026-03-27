@@ -7,7 +7,6 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 // Get All Projects
 router.get("/", verifyToken, projectController.getAllProjects);
-router.get("/:id", verifyToken, projectController.getProjectById);
 
 // Create Project
 const uploadFields = upload.fields([
@@ -17,6 +16,9 @@ const uploadFields = upload.fields([
   { name: "plot_demarcation_by_govt", maxCount: 1 },
   { name: "dpc_certificate", maxCount: 1 },
   { name: "soil_testing", maxCount: 1 },
+  { name: "fire_noc", maxCount: 1 },
+  { name: "labour_cess", maxCount: 1 },
+  { name: "solar_haredan_oc", maxCount: 1 },
 ]);
 router.post("/", verifyToken, uploadFields, projectController.createProject);
 

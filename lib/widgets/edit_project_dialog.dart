@@ -51,7 +51,10 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
     'SOIL TESTING',
     'WATER TESTING',
     'PLOT DEMARCATION BY GOVT',
-    'DPC CERTIFICATE'
+    'DPC CERTIFICATE',
+    'FIRE NOC',
+    'LABOUR CESS',
+    'SOLAR HAREDAN OC',
   ];
 
   static const Map<String, String> _docFieldMap = {
@@ -61,6 +64,9 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
     'WATER TESTING': 'water_testing',
     'PLOT DEMARCATION BY GOVT': 'plot_demarcation_by_govt',
     'DPC CERTIFICATE': 'dpc_certificate',
+    'FIRE NOC': 'fire_noc',
+    'LABOUR CESS': 'labour_cess',
+    'SOLAR HAREDAN OC': 'solar_haredan_oc',
   };
 
   @override
@@ -106,6 +112,9 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
       'WATER TESTING': TextEditingController(text: p.waterTestingRemark),
       'PLOT DEMARCATION BY GOVT': TextEditingController(text: p.plotDemarcationRemark),
       'DPC CERTIFICATE': TextEditingController(text: p.dpcCertificateRemark),
+      'FIRE NOC': TextEditingController(text: p.fireNocRemark),
+      'LABOUR CESS': TextEditingController(text: p.labourCessRemark),
+      'SOLAR HAREDAN OC': TextEditingController(text: p.solarHaredanOcRemark),
     };
 
     _hasFile = {
@@ -115,6 +124,9 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
       'WATER TESTING': p.waterTesting.isNotEmpty,
       'PLOT DEMARCATION BY GOVT': p.plotDemarcation.isNotEmpty,
       'DPC CERTIFICATE': p.dpcCertificate.isNotEmpty,
+      'FIRE NOC': p.fireNoc.isNotEmpty,
+      'LABOUR CESS': p.labourCess.isNotEmpty,
+      'SOLAR HAREDAN OC': p.solarHaredanOc.isNotEmpty,
     };
   }
 
@@ -202,10 +214,30 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
     final file = await openFile(acceptedTypeGroups: [typeGroup]);
     if (file == null || !mounted) return;
 
+    // Check file size — Vercel has a 4.5MB body limit
+    const maxSizeBytes = 4 * 1024 * 1024; // 4 MB
+    final fileSize = await file.length();
+    if (fileSize > maxSizeBytes) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'File too large! Max allowed size is 4MB. '
+              'Selected file is ${(fileSize / (1024 * 1024)).toStringAsFixed(1)}MB.',
+            ),
+            backgroundColor: Colors.red.shade700,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+      return;
+    }
+
     setState(() {
       _selectedFiles[title] = file;
       _hasFile[title] = true;
     });
+
   }
 
   String _documentUrl(String title) {
@@ -222,6 +254,12 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
         return widget.project.plotDemarcation;
       case 'DPC CERTIFICATE':
         return widget.project.dpcCertificate;
+      case 'FIRE NOC':
+        return widget.project.fireNoc;
+      case 'LABOUR CESS':
+        return widget.project.labourCess;
+      case 'SOLAR HAREDAN OC':
+        return widget.project.solarHaredanOc;
       default:
         return '';
     }
@@ -275,15 +313,15 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
       'revised_building_plan': _revisedBuildingPlanController.text.trim(),
       'factory_act_consultant': _factoryActConsultantController.text.trim(),
       'firefighting_approval': _firefightingApprovalController.text.trim(),
-      'fire_noc': _fireNocController.text.trim(),
-      'labour_cess': _labourCessController.text.trim(),
-      'solar_haredan_oc': _solarHaredanOcController.text.trim(),
       'award_letter_remark': _docRemarkControllers['AWARD LETTER']!.text.trim(),
       'land_paper_zonning_remark': _docRemarkControllers['LAND PAPER / ZONING']!.text.trim(),
       'soil_testing_remark': _docRemarkControllers['SOIL TESTING']!.text.trim(),
       'water_testing_remark': _docRemarkControllers['WATER TESTING']!.text.trim(),
       'plot_demarcation_by_govt_remark': _docRemarkControllers['PLOT DEMARCATION BY GOVT']!.text.trim(),
       'dpc_certificate_remark': _docRemarkControllers['DPC CERTIFICATE']!.text.trim(),
+      'fire_noc_remark': _docRemarkControllers['FIRE NOC']!.text.trim(),
+      'labour_cess_remark': _docRemarkControllers['LABOUR CESS']!.text.trim(),
+      'solar_haredan_oc_remark': _docRemarkControllers['SOLAR HAREDAN OC']!.text.trim(),
     };
 
     final filePaths = <String, String>{};
@@ -502,16 +540,6 @@ class _EditProjectDialogState extends State<EditProjectDialog> {
                       Row(
                         children: [
                           Expanded(child: _buildTextField('FIREFIGHTING APPROVAL', '2026-03-23...', _firefightingApprovalController)),
-                          const SizedBox(width: 16),
-                          Expanded(child: _buildTextField('FIRE NOC', 'NOC Detail', _fireNocController)),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Expanded(child: _buildTextField('LABOUR CESS', 'Cess Detail', _labourCessController)),
-                          const SizedBox(width: 16),
-                          Expanded(child: _buildTextField('SOLAR HAREDAN OC', 'OC Detail', _solarHaredanOcController)),
                         ],
                       ),
                       const SizedBox(height: 32),

@@ -37,7 +37,7 @@ const createProjectSheet = async () => {
     // 2️⃣ Ensure header row (32 columns)
     await sheets.spreadsheets.values.update({
       spreadsheetId: SPREADSHEET_ID,
-      range: `${SHEET_NAME}!A1:AF1`,
+      range: `${SHEET_NAME}!A1:AI1`,
       valueInputOption: "RAW",
       requestBody: {
         values: [
@@ -71,9 +71,12 @@ const createProjectSheet = async () => {
             "dpc_certificate", // 26
             "dpc_certificate_remark", // 27
             "fire_noc",       // 28
-            "labour_cess",    // 29
-            "solar_haredan_oc", // 30
-            "created_at",     // 31
+            "fire_noc_remark", // 29
+            "labour_cess",    // 30
+            "labour_cess_remark", // 31
+            "solar_haredan_oc", // 32
+            "solar_haredan_oc_remark", // 33
+            "created_at",     // 34
           ],
         ],
       },
@@ -92,7 +95,7 @@ const createProjectSheet = async () => {
       const now = new Date().toISOString();
 
       const seedRows = DEFAULT_PROJECTS.map((name, index) => {
-        const row = new Array(32).fill("");
+        const row = new Array(35).fill("");
         row[0] = index + 1;
         row[1] = name;
         row[2] = "N/A"; // address
@@ -102,7 +105,7 @@ const createProjectSheet = async () => {
         row[6] = "Active"; // status
         row[7] = ""; // date_of_app
         row[8] = ""; // team_lead
-        row[31] = now; // created_at
+        row[34] = now; // created_at
         return row;
       });
 

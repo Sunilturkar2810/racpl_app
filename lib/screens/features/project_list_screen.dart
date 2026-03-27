@@ -372,10 +372,14 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                 }),
                 const SizedBox(width: 8),
                 _buildActionIcon(Icons.edit_outlined, Colors.orange.shade400, () {
-                  showDialog(
+                  showDialog<bool>(
                     context: context,
                     builder: (_) => EditProjectDialog(project: project),
-                  );
+                  ).then((updated) {
+                    if (updated == true && context.mounted) {
+                      context.read<ProjectProvider>().fetchProjects();
+                    }
+                  });
                 }),
               ],
             ),
@@ -386,7 +390,7 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
   }
 
   Widget _buildStatusBadge(String status) {
-    if (status.isEmpty || status == 'N/A' || status == 'Active') {
+    if (status.isEmpty || status == 'N/A') {
        return Container(
          width: 30,
          height: 14,
@@ -397,16 +401,41 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
        );
     }
     
-    Color bgColor = Colors.purple.shade50;
-    Color textColor = Colors.purple.shade400;
+    Color bgColor;
+    Color textColor;
 
-    if (status.toUpperCase() == 'RUNNING') {
-      bgColor = Colors.green.shade50;
-      textColor = Colors.green.shade600;
+    switch (status.toUpperCase()) {
+      case 'RUNNING':
+        bgColor = Colors.green.shade50;
+        textColor = Colors.green.shade700;
+        break;
+      case 'AWARD TO START':
+        bgColor = Colors.blue.shade50;
+        textColor = Colors.blue.shade700;
+        break;
+      case 'HOLD':
+        bgColor = Colors.orange.shade50;
+        textColor = Colors.orange.shade700;
+        break;
+      case 'COMPLETED':
+        bgColor = Colors.teal.shade50;
+        textColor = Colors.teal.shade700;
+        break;
+      case 'CANCELLED':
+        bgColor = Colors.red.shade50;
+        textColor = Colors.red.shade700;
+        break;
+      case 'PROVISION':
+        bgColor = Colors.amber.shade50;
+        textColor = Colors.amber.shade700;
+        break;
+      default:
+        bgColor = Colors.purple.shade50;
+        textColor = Colors.purple.shade400;
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(12),
@@ -415,7 +444,7 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
         status.toUpperCase(),
         style: TextStyle(
           color: textColor,
-          fontSize: 10,
+          fontSize: 9,
           fontWeight: FontWeight.bold,
           letterSpacing: 0.5,
         ),

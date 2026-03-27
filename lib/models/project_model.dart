@@ -18,8 +18,11 @@ class Project {
   final String factoryActConsultant;
   final String firefightingApproval;
   final String fireNoc;
+  final String fireNocRemark;
   final String labourCess;
+  final String labourCessRemark;
   final String solarHaredanOc;
+  final String solarHaredanOcRemark;
 
   // Documents URLs
   final String awardLetter;
@@ -53,8 +56,11 @@ class Project {
     this.factoryActConsultant = '',
     this.firefightingApproval = '',
     this.fireNoc = '',
+    this.fireNocRemark = '',
     this.labourCess = '',
+    this.labourCessRemark = '',
     this.solarHaredanOc = '',
+    this.solarHaredanOcRemark = '',
     this.awardLetter = '',
     this.awardLetterRemark = '',
     this.landPaperZoning = '',
@@ -87,8 +93,11 @@ class Project {
     String? factoryActConsultant,
     String? firefightingApproval,
     String? fireNoc,
+    String? fireNocRemark,
     String? labourCess,
+    String? labourCessRemark,
     String? solarHaredanOc,
+    String? solarHaredanOcRemark,
     String? awardLetter,
     String? awardLetterRemark,
     String? landPaperZoning,
@@ -117,28 +126,26 @@ class Project {
       buildingPlanApproval: buildingPlanApproval ?? this.buildingPlanApproval,
       buildingPlanRemark: buildingPlanRemark ?? this.buildingPlanRemark,
       revisedBuildingPlan: revisedBuildingPlan ?? this.revisedBuildingPlan,
-      factoryActConsultant:
-          factoryActConsultant ?? this.factoryActConsultant,
-      firefightingApproval:
-          firefightingApproval ?? this.firefightingApproval,
+      factoryActConsultant: factoryActConsultant ?? this.factoryActConsultant,
+      firefightingApproval: firefightingApproval ?? this.firefightingApproval,
       fireNoc: fireNoc ?? this.fireNoc,
+      fireNocRemark: fireNocRemark ?? this.fireNocRemark,
       labourCess: labourCess ?? this.labourCess,
+      labourCessRemark: labourCessRemark ?? this.labourCessRemark,
       solarHaredanOc: solarHaredanOc ?? this.solarHaredanOc,
+      solarHaredanOcRemark: solarHaredanOcRemark ?? this.solarHaredanOcRemark,
       awardLetter: awardLetter ?? this.awardLetter,
       awardLetterRemark: awardLetterRemark ?? this.awardLetterRemark,
       landPaperZoning: landPaperZoning ?? this.landPaperZoning,
-      landPaperZoningRemark:
-          landPaperZoningRemark ?? this.landPaperZoningRemark,
+      landPaperZoningRemark: landPaperZoningRemark ?? this.landPaperZoningRemark,
       soilTesting: soilTesting ?? this.soilTesting,
       soilTestingRemark: soilTestingRemark ?? this.soilTestingRemark,
       waterTesting: waterTesting ?? this.waterTesting,
       waterTestingRemark: waterTestingRemark ?? this.waterTestingRemark,
       plotDemarcation: plotDemarcation ?? this.plotDemarcation,
-      plotDemarcationRemark:
-          plotDemarcationRemark ?? this.plotDemarcationRemark,
+      plotDemarcationRemark: plotDemarcationRemark ?? this.plotDemarcationRemark,
       dpcCertificate: dpcCertificate ?? this.dpcCertificate,
-      dpcCertificateRemark:
-          dpcCertificateRemark ?? this.dpcCertificateRemark,
+      dpcCertificateRemark: dpcCertificateRemark ?? this.dpcCertificateRemark,
     );
   }
 
@@ -150,9 +157,9 @@ class Project {
       location: json['location']?.toString() ?? 'N/A',
       clientName: json['client_name']?.toString() ?? 'N/A',
       contactNo: json['contact_no']?.toString() ?? 'N/A',
-      status: json['status']?.toString() ?? 'Active',
+      status: json['status']?.toString() ?? 'Award to Start',
       teamLead: json['team_lead']?.toString() ?? 'N/A',
-      
+
       dateOfApp: json['date_of_app']?.toString() ?? '',
       survey: json['survey']?.toString() ?? '',
       farPurchase: json['far_purchase']?.toString() ?? '',
@@ -162,8 +169,11 @@ class Project {
       factoryActConsultant: json['factory_act_consultant']?.toString() ?? '',
       firefightingApproval: json['firefighting_approval']?.toString() ?? '',
       fireNoc: json['fire_noc']?.toString() ?? '',
+      fireNocRemark: json['fire_noc_remark']?.toString() ?? '',
       labourCess: json['labour_cess']?.toString() ?? '',
+      labourCessRemark: json['labour_cess_remark']?.toString() ?? '',
       solarHaredanOc: json['solar_haredan_oc']?.toString() ?? '',
+      solarHaredanOcRemark: json['solar_haredan_oc_remark']?.toString() ?? '',
 
       awardLetter: json['award_letter']?.toString() ?? '',
       awardLetterRemark: json['award_letter_remark']?.toString() ?? '',

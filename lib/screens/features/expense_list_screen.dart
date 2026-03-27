@@ -144,50 +144,74 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     );
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
         title: const Text(
           'Expenses',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
-        centerTitle: false,
-        actions: [
-          Container(
-            margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: TextButton.icon(
-              onPressed: _exportPDF,
-              icon: const Icon(
-                Icons.picture_as_pdf,
-                color: Colors.red,
-                size: 16,
-              ),
-              label: const Text(
-                'Export PDF',
-                style: TextStyle(color: Colors.red, fontSize: 12),
-              ),
-            ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.add_circle, color: Colors.white, size: 28),
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                ),
-                builder: (context) => const SubmitExpenseDialog(),
-              );
-            },
-          ),
-        ],
+        centerTitle: true,
       ),
+
       body: Column(
         children: [
+          // Action Buttons Row
+          Container(
+            color: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            child: Row(
+              children: [
+                // Export PDF Button
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: _exportPDF,
+                    icon: const Icon(Icons.picture_as_pdf, size: 18),
+                    label: const Text(
+                      'Export PDF',
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      backgroundColor: Colors.blue.shade600,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                // Add Expense Button
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                        ),
+                        builder: (context) => const SubmitExpenseDialog(),
+                      );
+                    },
+                    icon: const Icon(Icons.add, size: 18),
+                    label: const Text(
+                      'Add Expense',
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      backgroundColor: Colors.blue.shade600,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
           // Filter Panel Design
           Container(
             margin: const EdgeInsets.all(16.0),
@@ -458,18 +482,19 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                 ? Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
                           Icons.receipt_long,
-                          size: 64,
+                          size: 40,
                           color: Colors.grey.shade300,
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 8),
                         Text(
                           'No expenses found',
                           style: TextStyle(
                             color: Colors.grey.shade500,
-                            fontSize: 16,
+                            fontSize: 14,
                           ),
                         ),
                       ],

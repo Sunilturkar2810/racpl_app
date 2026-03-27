@@ -106,9 +106,6 @@ class ProjectDetailsDialog extends StatelessWidget {
                           _InfoItem('REVISED BUILDING PLAN', _normalize(project.revisedBuildingPlan)),
                           _InfoItem('FACTORY ACT CONSULTANT', _normalize(project.factoryActConsultant)),
                           _InfoItem('FIREFIGHTING APPROVAL', _normalize(project.firefightingApproval)),
-                          _InfoItem('FIRE NOC', _normalize(project.fireNoc)),
-                          _InfoItem('LABOUR CESS', _normalize(project.labourCess)),
-                          _InfoItem('SOLAR HAREDAN OC', _normalize(project.solarHaredanOc)),
                         ]),
                       ],
                     ),
@@ -161,6 +158,24 @@ class ProjectDetailsDialog extends StatelessWidget {
                           title: 'DPC Certificate',
                           url: project.dpcCertificate,
                           remark: project.dpcCertificateRemark,
+                        ),
+                        _buildDocumentRow(
+                          context,
+                          title: 'Fire NOC',
+                          url: project.fireNoc,
+                          remark: project.fireNocRemark,
+                        ),
+                        _buildDocumentRow(
+                          context,
+                          title: 'Labour Cess',
+                          url: project.labourCess,
+                          remark: project.labourCessRemark,
+                        ),
+                        _buildDocumentRow(
+                          context,
+                          title: 'Solar Haredan OC',
+                          url: project.solarHaredanOc,
+                          remark: project.solarHaredanOcRemark,
                           isLast: true,
                         ),
                       ],
@@ -353,19 +368,9 @@ class ProjectDetailsDialog extends StatelessWidget {
               ),
             )
           else
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildDocIconButton(
-                  icon: Icons.remove_red_eye_outlined,
-                  onTap: () => _openUrl(context, url),
-                ),
-                const SizedBox(width: 8),
-                _buildDocIconButton(
-                  icon: Icons.open_in_new,
-                  onTap: () => _openUrl(context, url),
-                ),
-              ],
+            _buildDocIconButton(
+              icon: Icons.open_in_new,
+              onTap: () => _openUrl(context, url),
             ),
         ],
       ),
