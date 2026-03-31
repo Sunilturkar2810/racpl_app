@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:racpl/theme/app_colors.dart';
 
 class AppTheme {
-  // Common rounded corners for components
   static const double _borderRadius = 12.0;
+  static const Color _darkNavSurface = Color(0xFF111827);
+  static const Color _darkInputSurface = Color(0xFF151A23);
 
-  // Primary ColorScheme for Light Theme
   static final ColorScheme _lightColorScheme = ColorScheme.fromSeed(
     seedColor: AppColors.primary,
     primary: AppColors.primary,
@@ -19,7 +19,6 @@ class AppTheme {
     brightness: Brightness.light,
   );
 
-  // Primary ColorScheme for Dark Theme
   static final ColorScheme _darkColorScheme = ColorScheme.fromSeed(
     seedColor: AppColors.primary,
     primary: AppColors.primary,
@@ -33,14 +32,13 @@ class AppTheme {
     brightness: Brightness.dark,
   );
 
-  // Light Theme Definition
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: _lightColorScheme,
       scaffoldBackgroundColor: AppColors.background,
-      
-      // AppBar Theme - Primary background with White text
+      canvasColor: AppColors.surface,
+      dividerColor: AppColors.divider,
       appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
@@ -53,8 +51,6 @@ class AppTheme {
           fontWeight: FontWeight.w600,
         ),
       ),
-
-      // Button Themes
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
@@ -66,7 +62,6 @@ class AppTheme {
           elevation: 0,
         ),
       ),
-
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.primary,
@@ -77,8 +72,11 @@ class AppTheme {
           ),
         ),
       ),
-
-      // Card Theme
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: AppColors.primary,
+        ),
+      ),
       cardTheme: CardThemeData(
         color: AppColors.surface,
         elevation: 0,
@@ -88,8 +86,6 @@ class AppTheme {
         ),
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       ),
-
-      // Bottom Navigation Bar Theme
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: AppColors.primary,
         selectedItemColor: Colors.white,
@@ -97,11 +93,11 @@ class AppTheme {
         type: BottomNavigationBarType.fixed,
         elevation: 10,
       ),
-
-      // Input Decoration Theme (Forms)
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: Colors.white,
+        hintStyle: const TextStyle(color: AppColors.textSecondary),
+        labelStyle: const TextStyle(color: AppColors.textSecondary),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(_borderRadius),
           borderSide: const BorderSide(color: AppColors.border),
@@ -115,30 +111,66 @@ class AppTheme {
           borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
         ),
       ),
-
-      // Floating Action Button Theme
+      dialogTheme: DialogThemeData(
+        backgroundColor: AppColors.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(_borderRadius + 4),
+        ),
+      ),
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: AppColors.surface,
+        modalBackgroundColor: AppColors.surface,
+      ),
+      snackBarTheme: SnackBarThemeData(
+        backgroundColor: AppColors.primary,
+        contentTextStyle: const TextStyle(color: Colors.white),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(_borderRadius),
+        ),
+        behavior: SnackBarBehavior.floating,
+      ),
+      dividerTheme: const DividerThemeData(
+        color: AppColors.divider,
+        thickness: 1,
+      ),
+      progressIndicatorTheme: const ProgressIndicatorThemeData(
+        color: AppColors.primary,
+      ),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
       ),
     );
-
   }
 
-  // Dark Theme Definition
   static ThemeData get darkTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: _darkColorScheme,
       scaffoldBackgroundColor: AppColors.darkBackground,
-      
+      canvasColor: AppColors.darkSurface,
+      dividerColor: Colors.white12,
+      textTheme: ThemeData.dark().textTheme.apply(
+        bodyColor: AppColors.darkTextPrimary,
+        displayColor: AppColors.darkTextPrimary,
+      ),
+      primaryTextTheme: ThemeData.dark().primaryTextTheme.apply(
+        bodyColor: AppColors.darkTextPrimary,
+        displayColor: AppColors.darkTextPrimary,
+      ),
+      iconTheme: const IconThemeData(color: AppColors.darkTextPrimary),
       appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.darkSurface,
-        foregroundColor: AppColors.darkTextPrimary,
+        backgroundColor: _darkNavSurface,
+        foregroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
+        iconTheme: IconThemeData(color: Colors.white),
+        titleTextStyle: TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+        ),
       ),
-
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
@@ -147,29 +179,86 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(_borderRadius),
           ),
+          elevation: 0,
         ),
       ),
-
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: AppColors.darkTextPrimary,
+          side: const BorderSide(color: Colors.white24),
+          minimumSize: const Size(double.infinity, 48),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(_borderRadius),
+          ),
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: Colors.white,
+        ),
+      ),
       cardTheme: CardThemeData(
         color: AppColors.darkSurface,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(_borderRadius),
+          side: const BorderSide(color: Colors.white12),
         ),
       ),
-
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: AppColors.darkSurface,
-        selectedItemColor: AppColors.primary,
-        unselectedItemColor: AppColors.darkTextSecondary,
+        backgroundColor: _darkNavSurface,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white60,
         type: BottomNavigationBarType.fixed,
+        elevation: 12,
       ),
-
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: _darkInputSurface,
+        hintStyle: const TextStyle(color: AppColors.darkTextSecondary),
+        labelStyle: const TextStyle(color: AppColors.darkTextSecondary),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(_borderRadius),
+          borderSide: const BorderSide(color: Colors.white12),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(_borderRadius),
+          borderSide: const BorderSide(color: Colors.white12),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(_borderRadius),
+          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+        ),
+      ),
+      dialogTheme: DialogThemeData(
+        backgroundColor: AppColors.darkSurface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(_borderRadius + 4),
+        ),
+      ),
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: AppColors.darkSurface,
+        modalBackgroundColor: AppColors.darkSurface,
+      ),
+      snackBarTheme: SnackBarThemeData(
+        backgroundColor: _darkNavSurface,
+        contentTextStyle: const TextStyle(color: AppColors.darkTextPrimary),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(_borderRadius),
+        ),
+        behavior: SnackBarBehavior.floating,
+      ),
+      dividerTheme: const DividerThemeData(
+        color: Colors.white12,
+        thickness: 1,
+      ),
+      progressIndicatorTheme: const ProgressIndicatorThemeData(
+        color: AppColors.primary,
+      ),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
       ),
     );
-
   }
 }

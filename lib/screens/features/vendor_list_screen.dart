@@ -30,8 +30,9 @@ class _VendorListScreenState extends State<VendorListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: Colors.grey[50], // light background
+      backgroundColor: isDark ? AppColors.darkBackground : Colors.grey[50],
       appBar: AppBar(
         title: const Text(
           'Vendor Management',
@@ -157,8 +158,9 @@ class _VendorListScreenState extends State<VendorListScreen> {
   }
 
   Widget _buildFilters(BuildContext context, VendorProvider provider) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
-      color: Colors.white,
+      color: isDark ? AppColors.darkSurface : Colors.white,
       padding: const EdgeInsets.symmetric(vertical: 12.0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -310,6 +312,7 @@ class _VendorListScreenState extends State<VendorListScreen> {
     List<String> items,
     Function(String?) onChanged,
   ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final displayValue =
         (currentValue == null || currentValue.isEmpty) ? hint : currentValue;
     return SizedBox(
@@ -319,7 +322,7 @@ class _VendorListScreenState extends State<VendorListScreen> {
         children: [
           const SizedBox(height: 2),
           Material(
-            color: Colors.white,
+            color: isDark ? AppColors.darkSurface : Colors.white,
             borderRadius: BorderRadius.circular(14),
             child: InkWell(
               onTap: () => _showSelectionSheet(
@@ -336,10 +339,10 @@ class _VendorListScreenState extends State<VendorListScreen> {
                   vertical: 12,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade50,
+                  color: isDark ? const Color(0xFF151A23) : Colors.grey.shade50,
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
-                    color: Colors.grey.shade300,
+                    color: isDark ? Colors.white12 : Colors.grey.shade300,
                     width: 1.0,
                   ),
                 ),
@@ -350,14 +353,17 @@ class _VendorListScreenState extends State<VendorListScreen> {
                         displayValue,
                         style: TextStyle(
                           color: (currentValue == null || currentValue.isEmpty)
-                              ? Colors.grey[600]
-                              : const Color(0xFF1E293B),
+                              ? (isDark ? Colors.grey[400] : Colors.grey[600])
+                              : (isDark ? Colors.white : const Color(0xFF1E293B)),
                           fontSize: 13,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    Icon(Icons.keyboard_arrow_down, color: Colors.grey[600]),
+                    Icon(
+                      Icons.keyboard_arrow_down,
+                      color: isDark ? Colors.grey[400] : Colors.grey[600],
+                    ),
                   ],
                 ),
               ),
@@ -380,6 +386,7 @@ class _VendorListScreenState extends State<VendorListScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (sheetContext) {
+        final isDark = Theme.of(sheetContext).brightness == Brightness.dark;
         final sheetItems = <String?>[null, ...items];
 
         return SafeArea(
@@ -429,7 +436,10 @@ class _VendorListScreenState extends State<VendorListScreen> {
                   shrinkWrap: true,
                   itemCount: sheetItems.length,
                   separatorBuilder: (_, __) =>
-                      Divider(height: 1, color: Colors.grey.shade200),
+                      Divider(
+                        height: 1,
+                        color: isDark ? Colors.white12 : Colors.grey.shade200,
+                      ),
                   itemBuilder: (sheetContext, index) {
                     final item = sheetItems[index];
                     final isSelected = item == selectedValue ||
@@ -444,7 +454,7 @@ class _VendorListScreenState extends State<VendorListScreen> {
                               isSelected ? FontWeight.bold : FontWeight.w500,
                           color: isSelected
                               ? AppColors.primary
-                              : Colors.black87,
+                              : (isDark ? Colors.white : Colors.black87),
                         ),
                       ),
                       trailing: isSelected
@@ -465,6 +475,7 @@ class _VendorListScreenState extends State<VendorListScreen> {
   }
 
   Widget _buildList(VendorProvider provider) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     if (provider.isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -473,15 +484,22 @@ class _VendorListScreenState extends State<VendorListScreen> {
       return Center(
         child: Text(
           provider.error?.message ?? 'Error loading vendors',
-          style: const TextStyle(color: Colors.red),
+          style: TextStyle(
+            color: isDark ? Colors.red.shade300 : Colors.red,
+          ),
         ),
       );
     }
 
     final list = provider.filteredVendors;
     if (list.isEmpty) {
-      return const Center(
-        child: Text('No vendors found.', style: TextStyle(color: Colors.grey)),
+      return Center(
+        child: Text(
+          'No vendors found.',
+          style: TextStyle(
+            color: isDark ? Colors.grey.shade400 : Colors.grey,
+          ),
+        ),
       );
     }
 
@@ -494,9 +512,12 @@ class _VendorListScreenState extends State<VendorListScreen> {
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
-            side: BorderSide(color: Colors.grey.shade200),
+            side: BorderSide(
+              color: isDark ? Colors.white12 : Colors.grey.shade200,
+            ),
           ),
           margin: const EdgeInsets.only(bottom: 12),
+          color: isDark ? AppColors.darkSurface : Colors.white,
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -509,9 +530,10 @@ class _VendorListScreenState extends State<VendorListScreen> {
                     Expanded(
                       child: Text(
                         vendor.companyName,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.white : Colors.black87,
                         ),
                       ),
                     ),
@@ -527,7 +549,7 @@ class _VendorListScreenState extends State<VendorListScreen> {
                             );
                           },
                           child: Icon(Icons.remove_red_eye_outlined,
-                              color: Colors.blue.shade300, size: 20),
+                              color: AppColors.primary, size: 20),
                         ),
                         const SizedBox(width: 12),
                         InkWell(
@@ -538,7 +560,7 @@ class _VendorListScreenState extends State<VendorListScreen> {
                             );
                           },
                           child: Icon(Icons.edit_outlined,
-                              color: Colors.orange.shade300, size: 20),
+                              color: AppColors.primary, size: 20),
                         ),
                       ],
                     ),
@@ -558,7 +580,7 @@ class _VendorListScreenState extends State<VendorListScreen> {
                           vendor.location!,
                           style: TextStyle(
                             fontSize: 13,
-                            color: Colors.grey.shade700,
+                            color: isDark ? Colors.grey.shade300 : Colors.grey.shade700,
                           ),
                         ),
                       ),
@@ -586,15 +608,19 @@ class _VendorListScreenState extends State<VendorListScreen> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: Colors.blue.shade50,
+                          color: isDark
+                              ? AppColors.primary.withOpacity(0.15)
+                              : Colors.blue.shade50,
                           borderRadius: BorderRadius.circular(4),
-                          border: Border.all(color: Colors.blue.shade100),
+                          border: Border.all(
+                            color: isDark ? Colors.white12 : Colors.blue.shade100,
+                          ),
                         ),
                         child: Text(
                           cat,
                           style: TextStyle(
                             fontSize: 11,
-                            color: Colors.blue.shade800,
+                            color: isDark ? Colors.white : Colors.blue.shade800,
                           ),
                         ),
                       );
@@ -622,15 +648,19 @@ class _VendorListScreenState extends State<VendorListScreen> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: Colors.green.shade50,
+                          color: isDark
+                              ? AppColors.primary.withOpacity(0.15)
+                              : Colors.green.shade50,
                           borderRadius: BorderRadius.circular(4),
-                          border: Border.all(color: Colors.green.shade100),
+                          border: Border.all(
+                            color: isDark ? Colors.white12 : Colors.green.shade100,
+                          ),
                         ),
                         child: Text(
                           proj,
                           style: TextStyle(
                             fontSize: 11,
-                            color: Colors.green.shade800,
+                            color: isDark ? Colors.white : Colors.green.shade800,
                           ),
                         ),
                       );

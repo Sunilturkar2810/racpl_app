@@ -57,10 +57,16 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final sheetColor = isDark ? AppColors.darkSurface : Colors.white;
+        final labelColor = isDark ? Colors.white : Colors.black87;
+        final iconBg = isDark
+            ? Colors.white.withOpacity(0.08)
+            : Theme.of(context).primaryColor.withOpacity(0.08);
         return Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+          decoration: BoxDecoration(
+            color: sheetColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -138,9 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             Container(
                               padding: const EdgeInsets.all(14),
                               decoration: BoxDecoration(
-                                color: Theme.of(
-                                  context,
-                                ).primaryColor.withOpacity(0.08),
+                                color: iconBg,
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(
@@ -153,10 +157,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             Text(
                               _labels[actualIndex],
                               textAlign: TextAlign.center,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
-                                color: Colors.black87,
+                                color: labelColor,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -177,6 +181,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final navBackground = isDark ? const Color(0xFF111827) : AppColors.primary;
+    final selectedNavColor = Colors.white;
+    final unselectedNavColor = isDark ? Colors.white60 : Colors.white70;
     // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async => false,
@@ -192,9 +200,9 @@ class _HomeScreenState extends State<HomeScreen> {
             }
           },
           type: BottomNavigationBarType.fixed,
-          backgroundColor: AppColors.primary,
-          selectedItemColor: Colors.white,
-          unselectedItemColor: Colors.white70,
+          backgroundColor: navBackground,
+          selectedItemColor: selectedNavColor,
+          unselectedItemColor: unselectedNavColor,
           selectedLabelStyle: const TextStyle(
             fontWeight: FontWeight.w700,
             fontSize: 12,

@@ -108,6 +108,12 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
   @override
   Widget build(BuildContext context) {
     final expenseProvider = context.watch<ExpenseProvider>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final pageBg = isDark ? AppColors.darkBackground : Colors.grey.shade100;
+    final surfaceColor = isDark ? AppColors.darkSurface : Colors.white;
+    final subtleSurface = isDark ? const Color(0xFF151A23) : Colors.grey.shade50;
+    final borderColor = isDark ? Colors.white12 : Colors.grey.shade200;
+    final bodyText = isDark ? Colors.white : Colors.black87;
 
     List<Expense> allExpenses = expenseProvider.expenses;
 
@@ -135,7 +141,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: Colors.grey.shade100,
+      backgroundColor: pageBg,
       appBar: AppBar(
         title: const Text(
           'Expenses',
@@ -154,7 +160,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
         children: [
           // Action Buttons Row
           Container(
-            color: Colors.white,
+            color: surfaceColor,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             child: Row(
               children: [
@@ -213,12 +219,12 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
           Container(
             margin: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: surfaceColor,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.shade200),
+              border: Border.all(color: borderColor),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withOpacity(isDark ? 0.18 : 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -234,9 +240,13 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'SEARCH',
-                        style: TextStyle(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: isDark ? Colors.grey.shade400 : Colors.grey,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 6),
                       SizedBox(
@@ -246,11 +256,27 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                           controller: _searchController,
                           decoration: InputDecoration(
                             hintText: 'By Employee Name',
-                            hintStyle: TextStyle(fontSize: 13, color: Colors.grey.shade400),
+                            fillColor: subtleSurface,
+                            filled: true,
+                            hintStyle: TextStyle(
+                              fontSize: 13,
+                              color: isDark ? Colors.grey.shade500 : Colors.grey.shade400,
+                            ),
                             contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: Colors.grey.shade300)),
-                            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: Colors.grey.shade300)),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(6),
+                              borderSide: BorderSide(
+                                color: isDark ? Colors.white12 : Colors.grey.shade300,
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(6),
+                              borderSide: BorderSide(
+                                color: isDark ? Colors.white12 : Colors.grey.shade300,
+                              ),
+                            ),
                           ),
+                          style: TextStyle(color: bodyText),
                         ),
                       ),
                     ],
@@ -260,9 +286,13 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'START DATE',
-                        style: TextStyle(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: isDark ? Colors.grey.shade400 : Colors.grey,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 6),
                       SizedBox(
@@ -286,12 +316,32 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                           },
                           decoration: InputDecoration(
                             hintText: 'dd-mm-yyyy',
-                            hintStyle: TextStyle(fontSize: 13, color: Colors.grey.shade400),
+                            fillColor: subtleSurface,
+                            filled: true,
+                            hintStyle: TextStyle(
+                              fontSize: 13,
+                              color: isDark ? Colors.grey.shade500 : Colors.grey.shade400,
+                            ),
                             contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: Colors.grey.shade300)),
-                            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: Colors.grey.shade300)),
-                            suffixIcon: const Icon(Icons.calendar_today, size: 16, color: Colors.grey),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(6),
+                              borderSide: BorderSide(
+                                color: isDark ? Colors.white12 : Colors.grey.shade300,
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(6),
+                              borderSide: BorderSide(
+                                color: isDark ? Colors.white12 : Colors.grey.shade300,
+                              ),
+                            ),
+                            suffixIcon: Icon(
+                              Icons.calendar_today,
+                              size: 16,
+                              color: isDark ? Colors.grey.shade400 : Colors.grey,
+                            ),
                           ),
+                          style: TextStyle(color: bodyText),
                         ),
                       ),
                     ],
@@ -301,9 +351,13 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'END DATE',
-                        style: TextStyle(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: isDark ? Colors.grey.shade400 : Colors.grey,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 6),
                       SizedBox(
@@ -327,12 +381,32 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                           },
                           decoration: InputDecoration(
                             hintText: 'dd-mm-yyyy',
-                            hintStyle: TextStyle(fontSize: 13, color: Colors.grey.shade400),
+                            fillColor: subtleSurface,
+                            filled: true,
+                            hintStyle: TextStyle(
+                              fontSize: 13,
+                              color: isDark ? Colors.grey.shade500 : Colors.grey.shade400,
+                            ),
                             contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: Colors.grey.shade300)),
-                            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: Colors.grey.shade300)),
-                            suffixIcon: const Icon(Icons.calendar_today, size: 16, color: Colors.grey),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(6),
+                              borderSide: BorderSide(
+                                color: isDark ? Colors.white12 : Colors.grey.shade300,
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(6),
+                              borderSide: BorderSide(
+                                color: isDark ? Colors.white12 : Colors.grey.shade300,
+                              ),
+                            ),
+                            suffixIcon: Icon(
+                              Icons.calendar_today,
+                              size: 16,
+                              color: isDark ? Colors.grey.shade400 : Colors.grey,
+                            ),
                           ),
+                          style: TextStyle(color: bodyText),
                         ),
                       ),
                     ],
@@ -354,9 +428,13 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                       icon: const Icon(Icons.refresh, size: 18),
                       label: const Text('Reset'),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.red,
-                        side: BorderSide(color: Colors.red.shade100),
-                        backgroundColor: Colors.red.shade50,
+                        foregroundColor: isDark ? Colors.red.shade300 : Colors.red,
+                        side: BorderSide(
+                          color: isDark ? Colors.red.shade300.withOpacity(0.35) : Colors.red.shade100,
+                        ),
+                        backgroundColor: isDark
+                            ? Colors.red.shade900.withOpacity(0.18)
+                            : Colors.red.shade50,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                       ),
                     ),
@@ -368,17 +446,17 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
 
           // Total Amount Banner Design
           Container(
-            color: Colors.white,
+            color: surfaceColor,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   'Total Amount:',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                    color: bodyText,
                   ),
                 ),
                 Container(
@@ -387,14 +465,18 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.green.shade50,
+                    color: isDark
+                        ? AppColors.primary.withOpacity(0.15)
+                        : Colors.green.shade50,
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.green.shade200),
+                    border: Border.all(
+                      color: isDark ? Colors.white12 : Colors.green.shade200,
+                    ),
                   ),
                   child: Text(
                     '₹ ${totalAmount.toStringAsFixed(0)}',
                     style: TextStyle(
-                      color: Colors.green.shade700,
+                      color: isDark ? Colors.white : Colors.green.shade700,
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
                     ),
@@ -407,7 +489,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
           // Categories View Design
           Container(
             height: 60,
-            color: Colors.white,
+            color: surfaceColor,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -432,7 +514,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                             decoration: BoxDecoration(
                               color: isSelected
                                   ? Colors.white24
-                                  : Colors.grey.shade200,
+                                  : (isDark ? Colors.white10 : Colors.grey.shade200),
                               shape: BoxShape.circle,
                             ),
                             child: Text(
@@ -441,7 +523,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                                 fontSize: 10,
                                 color: isSelected
                                     ? Colors.white
-                                    : Colors.black87,
+                                    : bodyText,
                               ),
                             ),
                           ),
@@ -452,7 +534,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                     onSelected: (_) => setState(() => selectedCategory = cat),
                     selectedColor: AppColors.primary,
                     labelStyle: TextStyle(
-                      color: isSelected ? Colors.white : Colors.black87,
+                      color: isSelected ? Colors.white : bodyText,
                       fontWeight: isSelected
                           ? FontWeight.w600
                           : FontWeight.normal,
@@ -462,7 +544,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                       side: BorderSide(
                         color: isSelected
                             ? AppColors.primary
-                            : Colors.grey.shade300,
+                            : (isDark ? Colors.white12 : Colors.grey.shade300),
                       ),
                     ),
                   ),
@@ -484,13 +566,13 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                         Icon(
                           Icons.receipt_long,
                           size: 40,
-                          color: Colors.grey.shade300,
+                          color: isDark ? Colors.grey.shade700 : Colors.grey.shade300,
                         ),
                         const SizedBox(height: 8),
                         Text(
                           'No expenses found',
                           style: TextStyle(
-                            color: Colors.grey.shade500,
+                            color: isDark ? Colors.grey.shade400 : Colors.grey.shade500,
                             fontSize: 14,
                           ),
                         ),
@@ -510,12 +592,14 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
   }
 
   Widget _buildExpenseCard(Expense item) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     Color catColor = _getCategoryColor(item.category);
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 2,
-      shadowColor: Colors.black12,
+      shadowColor: isDark ? Colors.black45 : Colors.black12,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      color: isDark ? AppColors.darkSurface : Colors.white,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         child: Column(
@@ -548,9 +632,10 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                       children: [
                         Text(
                           item.userName.isNotEmpty ? item.userName : 'Unknown',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 14,
+                            color: isDark ? Colors.white : Colors.black87,
                           ),
                         ),
                         if (item.email.isNotEmpty)
@@ -559,7 +644,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                             child: Text(
                               item.email,
                               style: TextStyle(
-                                color: Colors.grey.shade600,
+                                color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
                                 fontSize: 12,
                               ),
                             ),
@@ -570,7 +655,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                             Text(
                               'ID: #${item.id}',
                               style: TextStyle(
-                                color: Colors.grey.shade600,
+                                color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -579,13 +664,13 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                             Icon(
                               Icons.circle,
                               size: 4,
-                              color: Colors.grey.shade400,
+                              color: isDark ? Colors.grey.shade500 : Colors.grey.shade400,
                             ),
                             const SizedBox(width: 8),
                             Text(
                               DateFormat('dd/MM/yyyy').format(item.createdAt),
                               style: TextStyle(
-                                color: Colors.grey.shade500,
+                                color: isDark ? Colors.grey.shade400 : Colors.grey.shade500,
                                 fontSize: 12,
                               ),
                             ),
@@ -601,14 +686,18 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                     vertical: 5,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.green.shade50,
+                    color: isDark
+                        ? AppColors.primary.withOpacity(0.15)
+                        : Colors.green.shade50,
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.green.shade200),
+                    border: Border.all(
+                      color: isDark ? Colors.white12 : Colors.green.shade200,
+                    ),
                   ),
                   child: Text(
                     '₹ ${item.amount.toStringAsFixed(0)}',
                     style: TextStyle(
-                      color: Colors.green.shade700,
+                      color: isDark ? Colors.white : Colors.green.shade700,
                       fontWeight: FontWeight.bold,
                       fontSize: 13,
                     ),
@@ -645,15 +734,16 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                               'CATEGORY',
                               style: TextStyle(
                                 fontSize: 10,
-                                color: Colors.grey.shade500,
+                                color: isDark ? Colors.grey.shade400 : Colors.grey.shade500,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             Text(
                               item.category,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
+                                color: isDark ? Colors.white : Colors.black87,
                               ),
                             ),
                           ],
@@ -662,7 +752,11 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                     ],
                   ),
                 ),
-                Container(width: 1, height: 26, color: Colors.grey.shade300),
+                Container(
+                  width: 1,
+                  height: 26,
+                  color: isDark ? Colors.white12 : Colors.grey.shade300,
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Row(
@@ -687,7 +781,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                             'BILL',
                             style: TextStyle(
                               fontSize: 10,
-                              color: Colors.grey.shade500,
+                              color: isDark ? Colors.grey.shade400 : Colors.grey.shade500,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -723,7 +817,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                                     (item.receiptUrl != null &&
                                         item.receiptUrl!.isNotEmpty)
                                     ? AppColors.primary
-                                    : Colors.black87,
+                                    : (isDark ? Colors.white : Colors.black87),
                               ),
                             ),
                           ),

@@ -27,8 +27,9 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F8FA),
+      backgroundColor: isDark ? AppColors.darkBackground : const Color(0xFFF7F8FA),
       appBar: AppBar(
         title: const Text(
           'Project Management',
@@ -90,6 +91,7 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
   }
 
   Widget _buildTopBar(ProjectProvider provider) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     List<String> projectNames = ['All Projects'];
     projectNames.addAll(provider.projects.map((p) => p.name).toSet().toList());
 
@@ -107,9 +109,11 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.grey.shade200),
+        border: Border.all(
+          color: isDark ? Colors.white12 : Colors.grey.shade200,
+        ),
       ),
       child: SizedBox(
         height: 74,
@@ -173,6 +177,7 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
     required List<String> items,
     required ValueChanged<String> onChanged,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return SizedBox(
       width: 180,
       child: Column(
@@ -182,13 +187,13 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
           label,
           style: TextStyle(
             fontSize: 10,
-            color: Colors.grey.shade600,
+            color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
             fontWeight: FontWeight.bold,
           ),
         ),
         const SizedBox(height: 4),
         Material(
-          color: Colors.white,
+          color: isDark ? AppColors.darkSurface : Colors.white,
           borderRadius: BorderRadius.circular(14),
           child: InkWell(
             onTap: () => _showSelectionSheet(
@@ -202,8 +207,13 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
               width: 180,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
               decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF151A23) : Colors.white,
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: AppColors.primary.withOpacity(0.5)),
+                border: Border.all(
+                  color: isDark
+                      ? Colors.white12
+                      : AppColors.primary.withOpacity(0.5),
+                ),
               ),
               child: Row(
                 children: [
@@ -213,14 +223,17 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                     child: Text(
                       value,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 13,
-                        color: Colors.black87,
+                        color: isDark ? Colors.white : Colors.black87,
                       ),
                     ),
                   ),
-                  Icon(Icons.keyboard_arrow_down, color: Colors.grey.shade600),
+                  Icon(
+                    Icons.keyboard_arrow_down,
+                    color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                  ),
                 ],
               ),
             ),
@@ -243,6 +256,7 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (sheetContext) {
+        final isDark = Theme.of(sheetContext).brightness == Brightness.dark;
         return SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -291,7 +305,7 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                   itemCount: items.length,
                   separatorBuilder: (_, __) => Divider(
                     height: 1,
-                    color: Colors.grey.shade200,
+                    color: isDark ? Colors.white12 : Colors.grey.shade200,
                   ),
                   itemBuilder: (sheetContext, index) {
                     final item = items[index];
@@ -306,7 +320,7 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                               : FontWeight.w500,
                           color: isSelected
                               ? AppColors.primary
-                              : Colors.black87,
+                              : (isDark ? Colors.white : Colors.black87),
                         ),
                       ),
                       trailing: isSelected
@@ -329,6 +343,7 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
   }
 
   Widget _buildInfoRow(String title, String value) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
       child: Row(
@@ -341,17 +356,17 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
-                color: Colors.grey.shade600,
+                color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
               ),
             ),
           ),
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
-                color: Colors.black87,
+                color: isDark ? Colors.white : Colors.black87,
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -363,14 +378,15 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
   }
 
   Widget _buildProjectCard(Project project) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Card(
       elevation: 0,
       margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: Colors.grey.shade200),
+        side: BorderSide(color: isDark ? Colors.white12 : Colors.grey.shade200),
       ),
-      color: Colors.white,
+      color: isDark ? AppColors.darkSurface : Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -399,10 +415,10 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                           Expanded(
                             child: Text(
                               project.name,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.black87,
+                                color: isDark ? Colors.white : Colors.black87,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -415,7 +431,10 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                           padding: const EdgeInsets.only(top: 2),
                           child: Text(
                             project.address,
-                            style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                            ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -467,7 +486,7 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                   );
                 }),
                 const SizedBox(width: 8),
-                _buildActionIcon(Icons.edit_outlined, Colors.orange.shade400, () {
+                _buildActionIcon(Icons.edit_outlined, AppColors.primary, () {
                   showDialog<bool>(
                     context: context,
                     builder: (_) => EditProjectDialog(project: project),
@@ -491,7 +510,9 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
          width: 30,
          height: 14,
          decoration: BoxDecoration(
-           color: Colors.grey.shade200,
+           color: Theme.of(context).brightness == Brightness.dark
+               ? Colors.white12
+               : Colors.grey.shade200,
            borderRadius: BorderRadius.circular(10),
          ),
        );

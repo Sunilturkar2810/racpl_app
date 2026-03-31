@@ -11,6 +11,7 @@ class ExpenseDetailsDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final dateFormat = DateFormat('dd/MM/yyyy, HH:mm:ss');
     final formattedDate = dateFormat.format(expense.createdAt);
 
@@ -18,6 +19,7 @@ class ExpenseDetailsDialog extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       insetPadding: const EdgeInsets.all(16),
       child: Container(
+        color: isDark ? AppColors.darkSurface : Colors.white,
         padding: const EdgeInsets.all(20),
         width: double.infinity,
         child: Column(
@@ -48,7 +50,7 @@ class ExpenseDetailsDialog extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          '#${expense.id} • ${expense.category.toUpperCase()}',
+                          '#${expense.id} - ${expense.category.toUpperCase()}',
                           style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
@@ -69,14 +71,17 @@ class ExpenseDetailsDialog extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            const Divider(height: 1),
+            Divider(height: 1, color: isDark ? Colors.white12 : Colors.grey.shade200),
             const SizedBox(height: 16),
             Row(
               children: [
-                Expanded(child: _buildInfoItem('EMPLOYEE', expense.userName)),
+                Expanded(
+                  child: _buildInfoItem(context, 'EMPLOYEE', expense.userName),
+                ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: _buildInfoItem(
+                    context,
                     'EMAIL',
                     expense.email.isNotEmpty ? expense.email : 'N/A',
                   ),
@@ -88,16 +93,20 @@ class ExpenseDetailsDialog extends StatelessWidget {
               children: [
                 Expanded(
                   child: _buildInfoItem(
+                    context,
                     'AMOUNT',
-                    '₹${expense.amount.toStringAsFixed(0)}',
+                    'Rs ${expense.amount.toStringAsFixed(0)}',
                   ),
                 ),
                 const SizedBox(width: 16),
-                Expanded(child: _buildInfoItem('CREATED AT', formattedDate)),
+                Expanded(
+                  child: _buildInfoItem(context, 'CREATED AT', formattedDate),
+                ),
               ],
             ),
             const SizedBox(height: 24),
             _buildSection(
+              context: context,
               title: 'Description / Notes',
               content: expense.description.isNotEmpty
                   ? expense.description
@@ -105,6 +114,7 @@ class ExpenseDetailsDialog extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             _buildSection(
+              context: context,
               title: 'Bill Attachment',
               contentWidget: Row(
                 children: [
@@ -140,7 +150,9 @@ class ExpenseDetailsDialog extends StatelessWidget {
                   ] else ...[
                     Text(
                       'No Bill Uploaded',
-                      style: TextStyle(color: Colors.grey.shade600),
+                      style: TextStyle(
+                        color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                      ),
                     ),
                   ],
                 ],
@@ -171,7 +183,8 @@ class ExpenseDetailsDialog extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoItem(String label, String value) {
+  Widget _buildInfoItem(BuildContext context, String label, String value) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -186,24 +199,32 @@ class ExpenseDetailsDialog extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           value,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: isDark ? Colors.white : Colors.black87,
+          ),
         ),
       ],
     );
   }
 
   Widget _buildSection({
+    required BuildContext context,
     required String title,
     String? content,
     Widget? contentWidget,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? const Color(0xFF151A23) : Colors.white,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.shade200),
+        border: Border.all(
+          color: isDark ? Colors.white12 : Colors.grey.shade200,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -221,7 +242,10 @@ class ExpenseDetailsDialog extends StatelessWidget {
           if (content != null)
             Text(
               content,
-              style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
+              style: TextStyle(
+                fontSize: 14,
+                color: isDark ? Colors.grey.shade300 : Colors.grey.shade700,
+              ),
             ),
         ],
       ),
