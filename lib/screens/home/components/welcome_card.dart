@@ -12,25 +12,13 @@ class WelcomeCard extends StatelessWidget {
         final userName = authProvider.currentUser?.fullName ?? 'User';
 
         return Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Theme.of(context).primaryColor.withOpacity(0.1),
-                Colors.transparent,
-              ],
-            ),
-            border: Border.all(
-              color: Theme.of(context).primaryColor.withOpacity(0.2),
-            ),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          padding: const EdgeInsets.all(16),
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 16),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               RichText(
+                textAlign: TextAlign.center,
                 text: TextSpan(
                   children: [
                     TextSpan(
@@ -58,9 +46,11 @@ class WelcomeCard extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 "Here's what's happening with your projects today.",
-                style: Theme.of(
-                  context,
-                ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
+                textAlign: TextAlign.center,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodySmall
+                    ?.copyWith(color: Colors.grey[600]),
               ),
             ],
           ),
