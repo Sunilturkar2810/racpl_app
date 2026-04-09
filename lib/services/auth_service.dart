@@ -81,10 +81,18 @@ class AuthService {
 
   /// Get current user profile
   Future<User> getCurrentUser() async {
-    return await _dioService.get<User>(
-      '/auth/me',
-      fromJson: (json) => User.fromJson(json as Map<String, dynamic>),
-    );
+    try {
+      return await _dioService.get<User>(
+        '/auth/me',
+        fromJson: (json) => User.fromJson(json as Map<String, dynamic>),
+      );
+    } catch (_) {
+      final storedUser = _buildUserFromStorage();
+      if (storedUser != null) {
+        return storedUser;
+      }
+      rethrow;
+    }
   }
 
   /// Update user theme preference
@@ -110,6 +118,29 @@ class AuthService {
   /// Get stored token
   Future<String?> getToken() async {
     return await _storage.getToken();
+  }
+
+  User? _buildUserFromStorage() {
+    final userId = _storage.getUserId();
+    final email = _storage.getUserEmail();
+    final role = _storage.getUserRole();
+    final name = (_storage.getUserName() ?? '').trim();
+
+    if (userId == null || email == null || email.isEmpty) {
+      return null;
+    }
+
+    final parts = name.isEmpty ? const <String>[] : name.split(RegExp(r'\s+'));
+    final firstName = parts.isNotEmpty ? parts.first : 'User';
+    final lastName = parts.length > 1 ? parts.sublist(1).join(' ') : '';
+
+    return User(
+      id: userId,
+      email: email,
+      firstName: firstName,
+      lastName: lastName,
+      role: (role == null || role.isEmpty) ? 'Employee' : role,
+    );
   }
 
   /// Refresh token (optional - for future implementation)

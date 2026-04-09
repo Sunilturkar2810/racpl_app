@@ -1,10 +1,11 @@
 import 'dart:developer' as developer;
 import 'package:dio/dio.dart';
+import '../configs/api_config.dart';
 import '../models/error_model.dart';
 import '../utils/storage_helper.dart';
 
 class DioService {
-  static const String baseUrl = 'https://racpl-erp.vercel.app/api';
+  static String get baseUrl => ApiConfig.baseUrl;
 
   late Dio _dio;
   final StorageHelper _storage;
@@ -132,6 +133,28 @@ class DioService {
     }
   }
 
+  /// Generic PATCH request
+  Future<T> patch<T>(
+    String endpoint, {
+    dynamic data,
+    required T Function(dynamic) fromJson,
+    Map<String, dynamic>? queryParameters,
+  }) async {
+    try {
+      final response = await _dio.patch(
+        endpoint,
+        data: data,
+        queryParameters: queryParameters,
+        options: _requestOptionsFor(data),
+      );
+      return fromJson(response.data);
+    } on DioException catch (e) {
+      throw AppError.fromDioException(e);
+    } catch (e) {
+      throw AppError(message: e.toString(), type: 'unknown');
+    }
+  }
+
   /// Generic DELETE request
   Future<T> delete<T>(
     String endpoint, {
@@ -217,7 +240,6 @@ class DioService {
 
     log.writeln('');
     developer.log(log.toString(), name: 'API_REQUEST');
-    print(log.toString());
   }
 
   /// Log API Response
@@ -254,7 +276,6 @@ class DioService {
 
     log.writeln('');
     developer.log(log.toString(), name: 'API_RESPONSE', level: 800);
-    print(log.toString());
   }
 
   /// Log API Error
@@ -285,6 +306,5 @@ class DioService {
 
     log.writeln('');
     developer.log(log.toString(), name: 'API_ERROR', level: 1000);
-    print(log.toString());
   }
 }

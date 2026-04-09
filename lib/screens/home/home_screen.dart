@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:racpl/theme/app_colors.dart';
 
-import '../features/checklist_list_screen.dart';
-import '../features/delegation_list_screen.dart';
 import '../features/expense_list_screen.dart';
 import '../features/mom_list_screen.dart';
 import '../features/project_list_screen.dart';
-import '../features/score_list_screen.dart';
+import '../features/task_menu_screen.dart';
 import '../features/ticket_list_screen.dart';
+import '../features/todo_board_screen.dart';
 import '../features/vendor_list_screen.dart';
 import '../profile/profile_screen.dart';
 import '../profile/settings_screen.dart';
@@ -25,9 +24,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<String> _labels = [
     'Dashboard',
-    'Score',
-    'Delegation',
-    'Checklist',
+    'To-Do',
+    'Tasks',
     'MOMS',
     'Project Management',
     'Vendor',
@@ -39,9 +37,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<IconData> _icons = [
     Icons.dashboard,
-    Icons.trending_up,
-    Icons.assignment,
-    Icons.checklist,
+    Icons.view_kanban_outlined,
+    Icons.assignment_outlined,
     Icons.meeting_room,
     Icons.folder,
     Icons.store,
@@ -61,8 +58,8 @@ class _HomeScreenState extends State<HomeScreen> {
         final sheetColor = isDark ? AppColors.darkSurface : Colors.white;
         final labelColor = isDark ? Colors.white : Colors.black87;
         final iconBg = isDark
-            ? Colors.white.withOpacity(0.08)
-            : Theme.of(context).primaryColor.withOpacity(0.08);
+            ? Colors.white.withValues(alpha: 0.08)
+            : Theme.of(context).primaryColor.withValues(alpha: 0.08);
         return Container(
           decoration: BoxDecoration(
             color: sheetColor,
@@ -100,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Container(
                           padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
+                            color: Colors.white.withValues(alpha: 0.2),
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(
@@ -231,24 +228,22 @@ class _HomeScreenState extends State<HomeScreen> {
       case 0:
         return const DashboardScreen();
       case 1:
-        return const ScoreListScreen();
+        return const TodoBoardScreen();
       case 2:
-        return const DelegationListScreen();
+        return const TaskMenuScreen();
       case 3:
-        return const ChecklistListScreen();
-      case 4:
         return const MomListScreen();
-      case 5:
+      case 4:
         return const ProjectListScreen();
-      case 6:
+      case 5:
         return const VendorListScreen();
-      case 7:
+      case 6:
         return const ExpenseListScreen();
-      case 8:
+      case 7:
         return const TicketListScreen();
-      case 9:
+      case 8:
         return const ProfileScreen();
-      case 10:
+      case 9:
         return const SettingsScreen();
       default:
         return const DashboardScreen();

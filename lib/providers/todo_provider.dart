@@ -25,71 +25,26 @@ class TodoProvider extends ChangeNotifier {
   bool get hasError => _error != null;
 
   List<Todo> get todoByStatus {
-    final todo = _todos.where((t) => t.status == 'todo').toList();
-    return todo;
+    return _todos.where((t) => _normalizeStatus(t.status) == 'to do').toList();
   }
 
   List<Todo> get inProgressByStatus {
-    final inProgress = _todos.where((t) => t.status == 'in-progress').toList();
-    return inProgress;
+    return _todos
+        .where((t) => _normalizeStatus(t.status) == 'in progress')
+        .toList();
   }
 
   List<Todo> get doneByStatus {
-    final done = _todos.where((t) => t.status == 'done').toList();
-    return done;
+    return _todos
+        .where((t) => _normalizeStatus(t.status) == 'completed')
+        .toList();
   }
 
   Future<void> fetchTodos() async {
     _setLoading(true);
     _clearError();
     try {
-      // Mock data implement kiya gaya hai takki Dashboard par UI dikhe.
-      // Baad me ise wapas: _todos = await _todoService.getTodos(); kar dijiyega.
-      await Future.delayed(
-        const Duration(milliseconds: 500),
-      ); // Simulate API delay
-      _todos = [
-        Todo(
-          id: 1,
-          userId: 1,
-          title: 'Review Q3 Financials',
-          description: '',
-          status: 'todo',
-          priority: 'high',
-          createdAt: DateTime.now(),
-          dueDate: DateTime.now(),
-        ),
-        Todo(
-          id: 2,
-          userId: 1,
-          title: 'Approve Leave Requests',
-          description: '',
-          status: 'todo',
-          priority: 'medium',
-          createdAt: DateTime.now(),
-          dueDate: DateTime.now().add(const Duration(days: 1)),
-        ),
-        Todo(
-          id: 3,
-          userId: 1,
-          title: 'Update Inventory Log',
-          description: '',
-          status: 'Done',
-          priority: 'low',
-          createdAt: DateTime.now(),
-          dueDate: DateTime.now().subtract(const Duration(days: 1)),
-        ),
-        Todo(
-          id: 4,
-          userId: 1,
-          title: 'Client Meeting Prep',
-          description: '',
-          status: 'todo',
-          priority: 'high',
-          createdAt: DateTime.now(),
-          dueDate: DateTime.now().add(const Duration(days: 2)),
-        ),
-      ];
+      _todos = await _todoService.getTodos();
       notifyListeners();
     } catch (e) {
       _setError(e);
@@ -194,4 +149,6 @@ class TodoProvider extends ChangeNotifier {
   void _clearError() {
     _error = null;
   }
+
+  String _normalizeStatus(String status) => status.trim().toLowerCase();
 }

@@ -54,7 +54,7 @@ class MyApp extends StatelessWidget {
         Provider<StorageHelper>(create: (_) => storage),
         Provider<DioService>(create: (_) => DioService(storage: storage)),
         ProxyProvider<DioService, AuthService>(
-          update: (_, dioService, __) =>
+          update: (_, dioService, previous) =>
               AuthService(dioService: dioService, storage: storage),
         ),
         // Auth Provider
@@ -96,7 +96,10 @@ class MyApp extends StatelessWidget {
           create: (context) {
             final dioService = context.read<DioService>();
             return TodoProvider(
-              todoService: TodoService(dioService: dioService),
+              todoService: TodoService(
+                dioService: dioService,
+                storage: storage,
+              ),
             );
           },
         ),
@@ -189,7 +192,9 @@ class _AuthWrapperState extends State<_AuthWrapper> {
   @override
   void initState() {
     super.initState();
-    _init();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _init();
+    });
   }
 
   Future<void> _init() async {

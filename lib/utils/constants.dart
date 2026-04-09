@@ -1,6 +1,8 @@
+import '../configs/api_config.dart';
+
 class AppConstants {
   // Backend API
-  static const String apiBaseUrl = 'https://racpl-erp.vercel.app/api';
+  static String get apiBaseUrl => ApiConfig.baseUrl;
   static const String apiTimeout = '30 seconds';
 
   // Roles

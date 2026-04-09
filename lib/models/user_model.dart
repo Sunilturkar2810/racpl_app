@@ -33,14 +33,24 @@ class User {
       userId = idValue;
     }
 
+    final fullName = (json['name'] ?? '').toString().trim();
+    final nameParts = fullName.isEmpty
+        ? const <String>[]
+        : fullName.split(RegExp(r'\s+'));
+    final fallbackFirstName = nameParts.isNotEmpty ? nameParts.first : '';
+    final fallbackLastName = nameParts.length > 1
+        ? nameParts.sublist(1).join(' ')
+        : '';
+
     return User(
       id: userId,
       email: json['email'] ?? json['Work_Email'] ?? '',
-      firstName: json['first_name'] ?? json['First_Name'] ?? '',
-      lastName: json['last_name'] ?? json['Last_Name'] ?? '',
-      role: json['role'] ?? 'Employee',
-      designation: json['designation'],
-      department: json['department'],
+      firstName:
+          json['first_name'] ?? json['First_Name'] ?? fallbackFirstName,
+      lastName: json['last_name'] ?? json['Last_Name'] ?? fallbackLastName,
+      role: json['role'] ?? json['Role'] ?? 'Employee',
+      designation: json['designation'] ?? json['Designation'],
+      department: json['department'] ?? json['Department'],
       profilePhotoUrl: json['profile_photo_url'],
       theme: json['theme'] ?? 'light',
     );

@@ -1,6 +1,6 @@
 import 'dio_service.dart';
 import '../models/dashboard_stats_model.dart';
-import '../models/attendance_trend_model.dart';
+import '../models/dashboard_trend_model.dart';
 import '../models/activity_model.dart';
 import '../models/todo_summary_model.dart';
 
@@ -10,82 +10,40 @@ class DashboardService {
   DashboardService({required DioService dioService}) : _dioService = dioService;
 
   Future<DashboardStats> fetchDashboardStats() async {
-    try {
-      return await _dioService.get(
-        '/dashboard/stats',
-        fromJson: (json) => DashboardStats.fromJson(json),
-      );
-    } catch (e) {
-      // Mock data fallback if API is not yet fully ready
-      return DashboardStats(
-        totalEmployees: 45,
-        presentToday: 42,
-        pendingTasks: 12,
-        openTickets: 3,
-      );
-    }
+    return await _dioService.get(
+      '/dashboard/stats',
+      fromJson: (json) => DashboardStats.fromJson(json as Map<String, dynamic>),
+    );
   }
 
-  Future<List<AttendanceTrend>> fetchAttendanceTrends(String month) async {
-    try {
-      final response = await _dioService.get(
-        '/dashboard/attendance-trends?month=$month',
-        fromJson: (json) => json as List<dynamic>,
-      );
-      return response.map((data) => AttendanceTrend.fromJson(data)).toList();
-    } catch (e) {
-      // Mock fallback
-      return [
-        AttendanceTrend(week: 'Week 1', percentage: 95.0),
-        AttendanceTrend(week: 'Week 2', percentage: 92.0),
-        AttendanceTrend(week: 'Week 3', percentage: 88.0),
-        AttendanceTrend(week: 'Week 4', percentage: 96.0),
-      ];
-    }
+  Future<List<DashboardTrend>> fetchDashboardTrends(String period) async {
+    final response = await _dioService.get(
+      '/dashboard/charts/trend?period=$period',
+      fromJson: (json) => (json as Map<String, dynamic>)['trend'] as List<dynamic>? ?? [],
+    );
+    return response.map((data) => DashboardTrend.fromJson(data as Map<String, dynamic>)).toList();
   }
 
   Future<List<ActivityModel>> fetchRecentActivity() async {
-    // This endpoint is currently unavailable on the deployed backend.
-    // Return a local fallback to avoid repeated 404 errors in the app logs.
-    return [
-      ActivityModel(
-        id: '1',
-        module: 'HRMS',
-        description: 'New policy document uploaded',
-        user: 'Sarah Jenkins',
-        time: '2 mins ago',
-        status: 'Completed',
-      ),
-      ActivityModel(
-        id: '2',
-        module: 'Help Ticket',
-        description: 'Ticket #2049: Login issue',
-        user: 'Mike Ross',
-        time: '15 mins ago',
-        status: 'Pending',
-      ),
-      ActivityModel(
-        id: '3',
-        module: 'FMS',
-        description: 'Monthly expense report generated',
-        user: 'System',
-        time: '1 hour ago',
-        status: 'Processing',
-      ),
-    ];
+    // Note: Depends on whether /activity returns { data: [] } or just [] 
+    // Usually standard responses have data object or returned directly.
+    final response = await _dioService.get(
+      '/dashboard/activity',
+      fromJson: (json) {
+        if (json is List) return json;
+        return (json as Map<String, dynamic>)['data'] as List<dynamic>? ?? [];
+      },
+    );
+    return response.map((data) => ActivityModel.fromJson(data as Map<String, dynamic>)).toList();
   }
 
   Future<TodoSummary> fetchTodoSummary() async {
-    // This endpoint is currently unavailable on the deployed backend.
-    // Return a local fallback to avoid repeated 404 errors in the app logs.
+    // This endpoint isn't fully separated in backend yet; UI uses TodoProvider.
     return TodoSummary(
-      pending: 5,
-      inProgress: 2,
-      completed: 10,
-      topTodos: [
-        {'title': 'Review PR', 'status': 'Pending'},
-        {'title': 'Update docs', 'status': 'In Progress'},
-      ],
+      pending: 0,
+      inProgress: 0,
+      completed: 0,
+      topTodos: [],
     );
   }
 }
